@@ -1,0 +1,18 @@
+# Dependencies
+node_modules/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Clasp / Apps Script local configs
+.clasp.json
+
+# Local environment and secret files
+*.local.*
+*.local
+.env
+.env.*
+
+# Temporary / screenshot artifacts
+說明/screenshots/

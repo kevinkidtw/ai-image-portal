@@ -1,0 +1,15 @@
+{
+  "candidates": [
+    {
+      "finishReason": "SAFETY",
+      "index": 0,
+      "safetyRatings": [
+        {
+          "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+          "probability": "HIGH",
+          "blocked": true
+        }
+      ]
+    }
+  ]
+}
