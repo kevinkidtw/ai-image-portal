@@ -227,6 +227,14 @@ function validateRequest(body) {
       error: 'prompt must not exceed 300 characters'
     };
   }
+  if (/[<>]/.test(body.prompt)) {
+    return {
+      valid: false,
+      code: 'BAD_REQUEST',
+      message: ERROR_MESSAGES.BAD_REQUEST,
+      error: 'prompt must not contain < or > characters'
+    };
+  }
 
   // photo 模式的圖片檢查
   if (body.mode === 'photo') {

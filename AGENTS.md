@@ -7,7 +7,7 @@
 3. `gas/Logic.gs` 與 `gas/Providers.gs` 的**頂層不准引用任何 GAS 全域物件**（`PropertiesService`、`UrlFetchApp`、`CacheService`、`LockService`、`SpreadsheetApp`、`DriveApp`、`Utilities`、`ContentService`）。需要用到的函式由呼叫端以參數傳入。
 4. **呼叫 AI 期間不准持有 `LockService` 的鎖。**
 5. **不准安裝任何 npm 套件。** 測試只用 Node 內建的 `node:test`、`node:assert`、`node:vm`。
-6. **不准為了讓測試通過而修改測試的斷言、跳過測試、或 mock 掉被測的函式本身。** 測試失敗就修程式。`tests/integration.test.js` 由 Claude 擁有，**完全不准修改**。
+6. **不准為了讓測試通過而修改測試的斷言、跳過測試、或 mock 掉被測的函式本身。** 測試失敗就修程式。`tests/integration.test.js` 與 `tests/frontend-static.test.js` 由 Claude 擁有，**完全不准修改**。
 7. **不准把任何圖片推到 GitHub，或把 Drive 檔案設為公開分享。**
 8. 模型 ID、API 參數名稱**要查官方文件確認**，不要憑記憶寫。查不到就在測試報告註明「未查證」。
 9. 不要動這個資料夾以外的任何檔案（上一層 `NAS網站部署/` 裡有 ccmtc-official、squid-portal 等其他正式專案，碰都不要碰）。

@@ -356,6 +356,20 @@ describe('Logic.gs 單元測試', () => {
       assert.strictEqual(res.code, 'BAD_REQUEST');
     });
 
+    test('prompt 含有 < 或 > 時回傳 BAD_REQUEST (必修 1 後端防護)', () => {
+      const reqLt = { ...validTextReq, prompt: '一隻<script>貓咪' };
+      const resLt = Logic.validateRequest(reqLt);
+      assert.strictEqual(resLt.valid, false);
+      assert.strictEqual(resLt.code, 'BAD_REQUEST');
+      assert.ok(resLt.error.includes('< or >'));
+
+      const reqGt = { ...validTextReq, prompt: '一隻>貓咪' };
+      const resGt = Logic.validateRequest(reqGt);
+      assert.strictEqual(resGt.valid, false);
+      assert.strictEqual(resGt.code, 'BAD_REQUEST');
+      assert.ok(resGt.error.includes('< or >'));
+    });
+
     test('photo 模式缺少 image 時回傳 BAD_REQUEST', () => {
       const req = { ...validPhotoReq, image: '' };
       const res = Logic.validateRequest(req);
