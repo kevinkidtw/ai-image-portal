@@ -126,20 +126,20 @@ document.addEventListener('DOMContentLoaded', function() {
     if (state.openUntilTimer) clearInterval(state.openUntilTimer);
 
     if (!c.serviceOpen) {
-      openStatusText.textContent = '🔴 目前為關閉狀態';
+      openStatusText.textContent = '目前為關閉狀態';
       openStatusText.style.color = 'var(--danger)';
       openTimerCountdown.textContent = '';
       return;
     }
 
     if (c.openUntil) {
-      openStatusText.textContent = '🟢 定時開放中';
+      openStatusText.textContent = '定時開放中';
       openStatusText.style.color = 'var(--success)';
       var updateCountdown = function() {
         var remainMs = new Date(c.openUntil).getTime() - Date.now();
         if (remainMs <= 0) {
           clearInterval(state.openUntilTimer);
-          openStatusText.textContent = '🔴 已到期關閉';
+          openStatusText.textContent = '已到期關閉';
           openStatusText.style.color = 'var(--danger)';
           openTimerCountdown.textContent = '';
         } else {
@@ -151,7 +151,7 @@ document.addEventListener('DOMContentLoaded', function() {
       updateCountdown();
       state.openUntilTimer = setInterval(updateCountdown, 1000);
     } else {
-      openStatusText.textContent = '🟢 開放中（直到手動關閉）';
+      openStatusText.textContent = '開放中（直到手動關閉）';
       openStatusText.style.color = 'var(--success)';
       openTimerCountdown.textContent = '';
     }
@@ -263,10 +263,10 @@ document.addEventListener('DOMContentLoaded', function() {
     inputAllowPhoto.checked = c.allowPhoto !== false;
 
     // 金鑰設定狀態徽章（絕不顯示金鑰內容）
-    geminiStatusBadge.textContent = c.hasGeminiKey ? 'Gemini ✅ 已設定' : 'Gemini ❌ 未設定';
+    geminiStatusBadge.textContent = c.hasGeminiKey ? 'Gemini 已設定' : 'Gemini 未設定';
     geminiStatusBadge.className = 'badge-tag ' + (c.hasGeminiKey ? 'success' : 'fail');
 
-    openaiStatusBadge.textContent = c.hasOpenAIKey ? 'OpenAI ✅ 已設定' : 'OpenAI ❌ 未設定';
+    openaiStatusBadge.textContent = c.hasOpenAIKey ? 'OpenAI 已設定' : 'OpenAI 未設定';
     openaiStatusBadge.className = 'badge-tag ' + (c.hasOpenAIKey ? 'success' : 'fail');
   }
 
@@ -342,7 +342,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // 3. 模式
         var tdMode = document.createElement('td');
-        tdMode.textContent = r.mode === 'photo' ? '📷 照片' : '✏️ 文字';
+        tdMode.textContent = r.mode === 'photo' ? '照片' : '文字';
         tr.appendChild(tdMode);
 
         // 4. 風格

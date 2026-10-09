@@ -3,25 +3,27 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://script.google.com https://script.googleusercontent.com; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://script.google.com https://script.googleusercontent.com; object-src 'none'; base-uri 'none'; form-action 'none'">
   <title>教師管理後台 — AI 創意生圖小幫手</title>
-  <link rel="stylesheet" href="assets/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Iansui&family=Noto+Sans+TC:wght@400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/style.css?v=20261010">
 </head>
 <body>
-  <!-- 測試模式 Banner -->
+  <!-- 測試模式黃色便利貼 -->
   <div id="mockBanner" class="mock-banner" style="display:none;">
-    <span>🧪 測試模式（Mock Mode）- 模擬運作中，未耗費後端額度</span>
+    <span>測試模式（Mock Mode）- 模擬運作中，未耗費後端額度</span>
   </div>
 
   <!-- 頂部導覽列 -->
   <header class="header">
-    <div class="header-content">
+    <div class="header-content admin-wide">
       <div class="brand">
-        <span class="brand-icon">🛠️</span>
-        <div>
-          <h1 class="brand-title">教師管理後台 <span class="admin-badge">控制台</span></h1>
-          <div class="brand-school">AI 創意生圖入口網站</div>
+        <div class="brand-title-wrap">
+          <h1 class="brand-title">老師的備課本 <span class="admin-badge">控制台</span></h1>
         </div>
+        <div class="brand-school">AI 創意生圖入口網站</div>
       </div>
       <div>
         <a href="index.html" class="btn-secondary" style="font-size:14px;padding:6px 14px;">返回學生首頁</a>
@@ -29,37 +31,38 @@
     </div>
   </header>
 
-  <main class="container">
-    <!-- 登入卡片 -->
+  <main class="container admin-wide">
+    <!-- 登入卡片 (4 節) -->
     <div id="loginSection" class="card" style="max-width:440px;margin:40px auto;text-align:center;">
-      <div style="font-size:42px;margin-bottom:12px;">🔒</div>
-      <h2 style="margin-bottom:8px;">教師身分登入</h2>
-      <p style="color:var(--text-muted);font-size:14px;margin-bottom:20px;">請輸入部署時設定的管理後台密碼</p>
-      <input type="password" id="passwordInput" class="helper-field" style="width:100%;padding:14px;font-size:16px;border:1px solid var(--border-color);border-radius:var(--radius-sm);margin-bottom:16px;background:var(--bg-color);color:var(--text-main);" placeholder="輸入管理密碼">
-      <button id="loginBtn" class="action-btn">登入控制台</button>
-      <div id="loginMsg" style="color:var(--danger);font-size:14px;margin-top:12px;display:none;"></div>
+      <h2 style="font-size:24px;margin-bottom:8px;">老師的備課本</h2>
+      <p style="color:var(--ink-2);font-size:14px;margin-bottom:20px;">請輸入部署時設定的管理後台密碼</p>
+      <div class="helper-field" style="margin-bottom:20px;">
+        <input type="password" id="passwordInput" placeholder="輸入管理密碼">
+      </div>
+      <button id="loginBtn" class="action-btn" type="button">登入控制台</button>
+      <div id="loginMsg" style="color:var(--pencil-red);font-size:14px;margin-top:12px;display:none;"></div>
     </div>
 
     <!-- 管理控制台主體（登入成功後顯示） -->
     <div id="dashboardSection" style="display:none;">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-        <h2 style="font-size:22px;font-weight:800;">課堂狀態總覽</h2>
-        <button id="logoutBtn" class="btn-secondary" style="font-size:14px;padding:6px 14px;">登出</button>
+        <h2 style="font-size:22px;">課堂狀態總覽</h2>
+        <button id="logoutBtn" class="btn-secondary" style="font-size:14px;padding:6px 14px;" type="button">登出</button>
       </div>
 
       <!-- 區塊 1: 服務大開關與定時關閉 -->
       <div class="card">
-        <h3 class="card-title">⚡ 服務開放狀態控制</h3>
+        <h3 class="card-title">服務開放狀態控制</h3>
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
           <div>
-            <div id="openStatusText" style="font-size:18px;font-weight:800;">檢查中…</div>
-            <div id="openTimerCountdown" style="font-size:14px;color:var(--text-muted);font-weight:700;"></div>
+            <div id="openStatusText" style="font-size:18px;font-family:var(--font-hand);">檢查中…</div>
+            <div id="openTimerCountdown" style="font-size:14px;color:var(--ink-2);font-family:var(--font-hand);"></div>
           </div>
           <div class="quick-switch-group">
-            <button id="btnOpen30" class="quick-btn">開放 30 分鐘</button>
-            <button id="btnOpen50" class="quick-btn">開放 50 分鐘</button>
-            <button id="btnOpenForever" class="quick-btn">開放到我關閉</button>
-            <button id="btnCloseNow" class="quick-btn" style="color:var(--danger);">立即關閉</button>
+            <button id="btnOpen30" class="quick-btn" type="button">開放 30 分鐘</button>
+            <button id="btnOpen50" class="quick-btn" type="button">開放 50 分鐘</button>
+            <button id="btnOpenForever" class="quick-btn" type="button">開放到我關閉</button>
+            <button id="btnCloseNow" class="quick-btn" style="color:var(--pencil-red);border-color:var(--pencil-red);" type="button">立即關閉</button>
           </div>
         </div>
       </div>
@@ -67,18 +70,18 @@
       <div class="admin-grid-2">
         <!-- 區塊 2: 班級通行碼投影大字卡片 -->
         <div class="card">
-          <h3 class="card-title">🔑 班級通行碼（投影用）</h3>
-          <p style="font-size:13px;color:var(--text-muted);">每節課可產生一組新通行碼，避免不在教室的人使用</p>
+          <h3 class="card-title">班級通行碼（投影用）</h3>
+          <p style="font-size:13px;color:var(--ink-2);">每節課可產生一組新通行碼，避免不在教室的人使用</p>
           <div id="currentClassCodeDisplay" class="class-code-display">----</div>
           <div style="display:flex;gap:10px;justify-content:center;">
-            <button id="newCodeBtn" class="quick-btn">產生新通行碼</button>
-            <button id="clearCodeBtn" class="quick-btn">免通行碼</button>
+            <button id="newCodeBtn" class="quick-btn" type="button">產生新通行碼</button>
+            <button id="clearCodeBtn" class="quick-btn" type="button">免通行碼</button>
           </div>
         </div>
 
         <!-- 區塊 3: 今日用量統計 -->
         <div class="card">
-          <h3 class="card-title">📊 今日額度與用量</h3>
+          <h3 class="card-title">今日額度與用量</h3>
           <div class="stats-bar-box">
             <div class="stats-bar-track">
               <div id="usageProgressFill" class="stats-bar-fill" style="width:0%;"></div>
@@ -88,22 +91,22 @@
               <span id="usageCountText">0 / 200</span>
             </div>
           </div>
-          <div class="helper-grid" style="margin-top:16px;">
-            <div style="background:var(--bg-color);padding:12px;border-radius:var(--radius-sm);text-align:center;">
-              <div style="font-size:12px;color:var(--text-muted);">成功生成</div>
-              <div id="successCount" style="font-size:22px;font-weight:800;color:var(--success);">0</div>
+          <div class="stats-numbers-grid">
+            <div class="stat-item">
+              <div class="stat-label">成功生成</div>
+              <div id="successCount" class="stat-val success">0</div>
             </div>
-            <div style="background:var(--bg-color);padding:12px;border-radius:var(--radius-sm);text-align:center;">
-              <div style="font-size:12px;color:var(--text-muted);">失敗或逾時</div>
-              <div id="failureCount" style="font-size:22px;font-weight:800;color:var(--danger);">0</div>
+            <div class="stat-item">
+              <div class="stat-label">失敗或逾時</div>
+              <div id="failureCount" class="stat-val failure">0</div>
             </div>
-            <div style="background:var(--bg-color);padding:12px;border-radius:var(--radius-sm);text-align:center;">
-              <div style="font-size:12px;color:var(--text-muted);">內容被擋</div>
-              <div id="blockedCount" style="font-size:22px;font-weight:800;color:var(--warning);">0</div>
+            <div class="stat-item">
+              <div class="stat-label">內容被擋</div>
+              <div id="blockedCount" class="stat-val blocked">0</div>
             </div>
-            <div style="background:var(--bg-color);padding:12px;border-radius:var(--radius-sm);text-align:center;">
-              <div style="font-size:12px;color:var(--text-muted);">今日估計花費</div>
-              <div id="costEstimateText" style="font-size:18px;font-weight:800;color:var(--text-main);">未設定單價</div>
+            <div class="stat-item">
+              <div class="stat-label">今日估計花費</div>
+              <div id="costEstimateText" class="stat-val" style="font-size:16px;">未設定單價</div>
             </div>
           </div>
         </div>
@@ -111,13 +114,13 @@
 
       <!-- 區塊 4: 限額與供應商設定 -->
       <div class="card">
-        <h3 class="card-title">⚙️ 限額與安全設定</h3>
-        <div style="margin-bottom:16px;display:flex;gap:12px;flex-wrap:wrap;">
-          <span>金鑰狀態：</span>
+        <h3 class="card-title">限額與安全設定</h3>
+        <div style="margin-bottom:16px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
+          <span style="font-family:var(--font-hand);font-size:14px;">金鑰狀態：</span>
           <span id="geminiStatusBadge" class="badge-tag">Gemini 檢查中</span>
           <span id="openaiStatusBadge" class="badge-tag">OpenAI 檢查中</span>
         </div>
-        <div class="helper-grid">
+        <div class="admin-field-grid">
           <div class="helper-field">
             <label for="inputDailyGlobal">全班每日生成總上限 (張)</label>
             <input type="number" id="inputDailyGlobal" min="1" max="5000">
@@ -136,12 +139,12 @@
           </div>
           <div class="helper-field">
             <label for="inputProvider">預設 AI 供應商</label>
-            <select id="inputProvider" style="width:100%;padding:12px;font-size:16px;border:1px solid var(--border-color);border-radius:var(--radius-sm);background:var(--bg-color);color:var(--text-main);">
+            <select id="inputProvider">
               <option value="gemini">Google Gemini (預設)</option>
               <option value="openai">OpenAI</option>
             </select>
           </div>
-          <div class="helper-field" style="display:flex;align-items:center;padding-top:28px;">
+          <div class="helper-field" style="display:flex;align-items:center;padding-top:20px;">
             <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
               <input type="checkbox" id="inputAllowPhoto" style="width:20px;height:20px;">
               <span>開放照片風格化模式</span>
@@ -149,18 +152,18 @@
           </div>
         </div>
         <div style="margin-top:16px;display:flex;align-items:center;gap:12px;">
-          <button id="saveConfigBtn" class="action-btn" style="width:auto;padding:10px 24px;">儲存設定</button>
-          <span id="saveConfigMsg" style="font-size:14px;font-weight:700;display:none;"></span>
+          <button id="saveConfigBtn" class="action-btn" style="width:auto;padding:8px 24px;" type="button">儲存設定</button>
+          <span id="saveConfigMsg" style="font-size:14px;font-family:var(--font-hand);display:none;"></span>
         </div>
       </div>
 
       <!-- 區塊 5: 最近生圖紀錄表 -->
       <div class="card">
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
-          <h3 class="card-title" style="margin-bottom:0;">📋 最近生圖紀錄（前 50 筆）</h3>
-          <button id="refreshLogsBtn" class="btn-secondary" style="font-size:14px;padding:6px 14px;">手動重新整理</button>
+          <h3 class="card-title" style="margin-bottom:0;">最近生圖紀錄（前 50 筆）</h3>
+          <button id="refreshLogsBtn" class="btn-secondary" style="font-size:14px;padding:6px 14px;" type="button">手動重新整理</button>
         </div>
-        <p style="font-size:13px;color:var(--text-muted);margin-bottom:12px;">系統每 15 秒自動刷新。為保護學生隱私，本系統絕不保存任何照片。</p>
+        <p style="font-size:13px;color:var(--ink-2);margin-bottom:12px;">系統每 15 秒自動刷新。為保護學生隱私，本系統絕不保存任何照片。</p>
         <div class="table-responsive">
           <table class="admin-table">
             <thead>
@@ -178,7 +181,7 @@
             </thead>
             <tbody id="logsTableBody">
               <tr>
-                <td colspan="9" style="text-align:center;color:var(--text-muted);">載入日誌中…</td>
+                <td colspan="9" style="text-align:center;color:var(--ink-2);">載入日誌中…</td>
               </tr>
             </tbody>
           </table>
@@ -191,8 +194,8 @@
     AI 創意生圖入口網站 • 教師私有管理控制台
   </footer>
 
-  <script src="assets/config.js"></script>
-  <script src="assets/api.js"></script>
-  <script src="assets/admin.js"></script>
+  <script src="assets/config.js?v=20261010"></script>
+  <script src="assets/api.js?v=20261010"></script>
+  <script src="assets/admin.js?v=20261010"></script>
 </body>
 </html>

@@ -212,7 +212,7 @@ var ImageHelper = {
     ctx.fillStyle = '#1e293b';
     ctx.font = 'bold 36px "Noto Sans TC", sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('🎨 ' + (styleName || '精選風格'), size / 2, cardMargin + 90);
+    ctx.fillText(styleName || '精選風格', size / 2, cardMargin + 90);
 
     ctx.fillStyle = '#64748b';
     ctx.font = '22px "Noto Sans TC", sans-serif';

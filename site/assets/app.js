@@ -84,17 +84,23 @@ document.addEventListener('DOMContentLoaded', function() {
     startBtn.disabled = !canPress;
 
     if (state.loading) {
-      startBtn.textContent = '🎨 AI 正在努力畫圖中…';
+      startBtn.classList.remove('wait');
+      startBtn.textContent = 'AI 正在畫…';
     } else if (state.retryPending) {
-      startBtn.textContent = '⏳ 排隊等待自動重試中…';
+      startBtn.classList.remove('wait');
+      startBtn.textContent = '排隊等待自動重試中…';
     } else if (state.cooldownRemaining > 0) {
-      startBtn.textContent = '⏳ 請稍候（' + state.cooldownRemaining + ' 秒）';
+      startBtn.classList.add('wait');
+      startBtn.textContent = '休息一下，還有 ' + state.cooldownRemaining + ' 秒';
     } else if (!state.serverOpen) {
-      startBtn.textContent = '🔴 尚未開放畫圖';
+      startBtn.classList.remove('wait');
+      startBtn.textContent = '還沒開放';
     } else if (state.deviceBlocked) {
-      startBtn.textContent = '⚠️ 請找老師協助';
+      startBtn.classList.remove('wait');
+      startBtn.textContent = '請找老師協助';
     } else {
-      startBtn.textContent = '🚀 開始畫圖';
+      startBtn.classList.remove('wait');
+      startBtn.textContent = '開始畫！';
     }
   }
 
@@ -117,7 +123,7 @@ document.addEventListener('DOMContentLoaded', function() {
       if (!data.open) {
         state.serverOpen = false;
         statusLight.className = 'status-indicator closed';
-        statusLight.textContent = '🔴 尚未開放';
+        statusLight.textContent = '還沒開放';
       } else {
         state.serverOpen = true;
         statusLight.className = 'status-indicator open';
@@ -128,13 +134,16 @@ document.addEventListener('DOMContentLoaded', function() {
           var mm = ('0' + d.getMinutes()).slice(-2);
           openUntilText = '（到 ' + hh + ':' + mm + '）';
         }
-        statusLight.textContent = '🟢 開放中' + openUntilText;
+        statusLight.textContent = '開放中' + openUntilText;
       }
 
       // 額度徽章更新（建議修 6: 顯示全班與個人次數）
       if (remainingBadge) {
-        var devText = (data.deviceRemaining !== undefined) ? ' ｜ 你還可畫：' + data.deviceRemaining + ' 次' : '';
-        remainingBadge.textContent = '今日剩餘：' + data.remainingToday + ' 次' + devText;
+        var devRemaining = (data.deviceRemaining !== undefined) ? data.deviceRemaining : data.remainingToday;
+        remainingBadge.textContent = '你今天還可以畫 ' + devRemaining + ' 張';
+        if (data.remainingToday !== undefined) {
+          remainingBadge.title = '全班今日剩餘：' + data.remainingToday + ' 張';
+        }
       }
 
       // 通行碼檢查與更換提醒（建議修 7）
@@ -199,7 +208,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // 2. 渲染風格卡片（必修 1: 不用 innerHTML；建議修 9: 去除重複 emoji）
+  // 2. 渲染風格卡片（必修 1: 不用 innerHTML；素描本風格去掉 emoji）
   function renderStyles(styles) {
     stylesGrid.innerHTML = '';
     styles.forEach(function(s) {
@@ -207,18 +216,14 @@ document.addEventListener('DOMContentLoaded', function() {
       card.className = 'style-card' + (s.id === state.selectedStyle ? ' selected' : '');
       card.setAttribute('role', 'button');
       card.setAttribute('tabindex', '0');
-      card.setAttribute('aria-label', s.label);
+      var cleanLabel = (s.label || '').replace(/\p{Extended_Pictographic}️?/gu, '').trim();
+      card.setAttribute('aria-label', cleanLabel);
       card.dataset.styleId = s.id;
-
-      var emojiDiv = document.createElement('div');
-      emojiDiv.className = 'style-emoji';
-      emojiDiv.textContent = s.emoji;
 
       var nameDiv = document.createElement('div');
       nameDiv.className = 'style-name';
-      nameDiv.textContent = (s.label || '').replace(s.emoji, '').trim();
+      nameDiv.textContent = cleanLabel;
 
-      card.appendChild(emojiDiv);
       card.appendChild(nameDiv);
 
       function selectCard() {
@@ -485,13 +490,27 @@ document.addEventListener('DOMContentLoaded', function() {
 
       // 顯示大圖與成果卡片
       artworkImage.src = fullImgSrc;
+      var artworkLabel = document.getElementById('artworkLabel');
+      if (artworkLabel) {
+        var labelPrompt = reqPayload.prompt || '';
+        if (labelPrompt.length > 16) {
+          labelPrompt = labelPrompt.substring(0, 16) + '…';
+        }
+        var styleName = '';
+        var styleObj = ApiClient.STYLES.find(function(s) { return s.id === state.selectedStyle; });
+        if (styleObj && styleObj.label) {
+          styleName = styleObj.label.replace(/\p{Extended_Pictographic}️?/gu, '').trim();
+        }
+        artworkLabel.textContent = '《' + labelPrompt + '》・' + (styleName ? styleName + '・' : '') + 'AI 生成';
+      }
       resultCard.style.display = 'block';
       resultCard.scrollIntoView({ behavior: 'smooth' });
 
-      // 更新今日與裝置額度（建議修 6）
+      // 更新今日與裝置額度（你今天還可以畫 N 張）
       if (remainingBadge && imgData.remainingToday !== undefined) {
-        var devTxt = (imgData.deviceRemaining !== undefined) ? ' ｜ 你還可畫：' + imgData.deviceRemaining + ' 次' : '';
-        remainingBadge.textContent = '今日剩餘：' + imgData.remainingToday + ' 次' + devTxt;
+        var devRem = (imgData.deviceRemaining !== undefined) ? imgData.deviceRemaining : imgData.remainingToday;
+        remainingBadge.textContent = '你今天還可以畫 ' + devRem + ' 張';
+        remainingBadge.title = '全班今日剩餘：' + imgData.remainingToday + ' 張';
       }
 
       // 加入「這節課的作品」縮圖列
@@ -638,7 +657,7 @@ document.addEventListener('DOMContentLoaded', function() {
   function showAlert(type, message) {
     if (!alertBox || !alertText) return;
     alertBox.className = 'alert-box ' + (type === 'danger' ? 'danger' : 'warning');
-    alertIcon.textContent = type === 'danger' ? '⚠️' : '💡';
+    if (alertIcon) alertIcon.textContent = '';
     alertText.textContent = message;
     alertBox.style.display = 'flex';
     alertBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -676,17 +695,20 @@ document.addEventListener('DOMContentLoaded', function() {
     if (mockCode === 'CLOSED') {
       showAlert('danger', ApiClient.ERROR_MESSAGES.CLOSED);
       statusLight.className = 'status-indicator closed';
-      statusLight.textContent = '🔴 尚未開放';
+      statusLight.textContent = '還沒開放';
       state.serverOpen = false;
       refreshStartButton();
     } else if (mockCode === 'DAILY_LIMIT') {
       showAlert('danger', ApiClient.ERROR_MESSAGES.DAILY_LIMIT);
-      if (remainingBadge) remainingBadge.textContent = '今日剩餘：0 次 ｜ 你還可畫：0 次';
+      if (remainingBadge) remainingBadge.textContent = '你今天還可以畫 0 張';
       state.serverOpen = false;
       refreshStartButton();
     } else if (mockCode === 'DEVICE_LIMIT') {
       showAlert('danger', ApiClient.ERROR_MESSAGES.DEVICE_LIMIT);
-      if (remainingBadge) remainingBadge.textContent = '今日剩餘：全班 180 次 ｜ 你還可畫：0 次';
+      if (remainingBadge) {
+        remainingBadge.textContent = '你今天還可以畫 0 張';
+        remainingBadge.title = '全班今日剩餘：180 張';
+      }
       state.serverOpen = false;
       refreshStartButton();
     } else if (mockCode === 'COOLDOWN') {

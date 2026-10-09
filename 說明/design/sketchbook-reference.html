@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>素描本參考稿</title>
+<link href="https://fonts.googleapis.com/css2?family=Iansui&family=Noto+Sans+TC:wght@400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper: #FBF8F1; --paper-2: #F3EEE2; --ink: #1F1F1F; --ink-2: #5E5A52; --rule: #D9D2C3;
+  --highlight: #FFD43B; --on-highlight: #1F1F1F; --pencil-red: #C92A2A; --pencil-green: #2B8A3E;
+  --tape: rgba(255, 212, 59, 0.55);
+  --font-hand: "Iansui", "BiauKai", "DFKai-SB", "Kaiti TC", "PingFang TC", "Microsoft JhengHei", serif;
+  --font-body: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif;
+  --line: 1.5px solid var(--ink); --line-dashed: 1.5px dashed var(--ink);
+  --wobble-1: 10px 14px 9px 12px; --wobble-2: 12px 9px 14px 10px; --wobble-3: 9px 12px 10px 14px;
+}
+.dark {
+  --paper: #1C1B18; --paper-2: #25231F; --ink: #F1ECE0; --ink-2: #B9B2A3; --rule: #3A3731;
+  --highlight: #F2C230; --pencil-red: #FF8787; --pencil-green: #69DB7C; --tape: rgba(242, 194, 48, 0.45);
+  --line: 1.5px solid var(--ink); --line-dashed: 1.5px dashed var(--ink);
+}
+* { box-sizing: border-box; }
+body { margin: 0; padding: 24px 16px; background: #E9E5DC; font-family: var(--font-body); }
+.board { display: flex; flex-wrap: wrap; gap: 32px; justify-content: center; align-items: flex-start; }
+.caption { font: 14px var(--font-body); color: #5E5A52; text-align: center; margin: 0 0 8px; }
+.phone { width: 360px; background: var(--paper); color: var(--ink); border: 1px solid #CFC8B8; border-radius: 28px; padding: 20px 16px 28px; position: relative; }
+.note { position: absolute; top: -10px; right: 14px; background: var(--highlight); color: var(--on-highlight); border: var(--line); border-color: #1F1F1F; font: 12px var(--font-hand); padding: 4px 10px; transform: rotate(-1deg); }
+.head { display: flex; justify-content: space-between; align-items: flex-start; margin-top: 8px; }
+.title { font: 24px var(--font-hand); line-height: 1.2; display: flex; align-items: center; gap: 6px; }
+.squiggle { display: block; margin-top: 2px; }
+.pill { font: 14px var(--font-hand); border: var(--line); border-radius: 999px; padding: 4px 12px; background: var(--highlight); color: var(--on-highlight); border-color: #1F1F1F; white-space: nowrap; }
+.quota { font: 15px var(--font-hand); color: var(--ink-2); margin: 6px 0 16px; }
+.tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 18px; }
+.tab { font: 16px var(--font-hand); min-height: 48px; display: flex; align-items: center; justify-content: center; border: var(--line-dashed); border-radius: var(--wobble-2); }
+.tab.on { background: var(--highlight); color: var(--on-highlight); border: var(--line); border-color: #1F1F1F; border-radius: var(--wobble-1); }
+h3 { font: 18px var(--font-hand); margin: 0 0 8px; font-weight: 400; }
+.styles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 18px; }
+.sty { font: 15px var(--font-hand); min-height: 48px; display: flex; align-items: center; justify-content: center; border: var(--line-dashed); }
+.sty:nth-child(3n+1) { border-radius: var(--wobble-1); } .sty:nth-child(3n+2) { border-radius: var(--wobble-2); } .sty:nth-child(3n) { border-radius: var(--wobble-3); }
+.sty.on { background: var(--highlight); color: var(--on-highlight); border: var(--line); border-color: #1F1F1F; }
+.fill { font: 16px var(--font-hand); line-height: 2.2; margin-bottom: 10px; }
+.blank { display: inline-block; min-width: 72px; border-bottom: var(--line); font: 15px var(--font-body); color: var(--ink-2); text-align: center; padding: 0 4px; line-height: 1.6; }
+.lined { font: 15px/24px var(--font-body); min-height: 74px; padding: 0 8px; border: var(--line); border-radius: 4px; background: repeating-linear-gradient(transparent 0 23px, var(--rule) 23px 24px); color: var(--ink); margin-bottom: 8px; }
+.ideas { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 18px; }
+.idea { font: 14px var(--font-hand); border: var(--line-dashed); border-radius: 999px; padding: 4px 12px; color: var(--ink-2); }
+.go { font: 21px var(--font-hand); width: 100%; min-height: 54px; border: var(--line); border-color: #1F1F1F; border-radius: 999px; background: var(--highlight); color: var(--on-highlight); }
+.go.wait { background: transparent; color: var(--ink); border: var(--line-dashed); margin-top: 10px; }
+.margin-note { border-left: 3px solid var(--pencil-red); padding: 2px 0 2px 10px; font: 16px var(--font-hand); color: var(--pencil-red); margin: 16px 0; }
+.result { margin: 28px 10px 8px; position: relative; transform: rotate(0.8deg); }
+.frame { border: var(--line); background: #FFFFFF; padding: 8px; }
+.dark .frame { background: var(--paper-2); }
+.art { height: 200px; background: #E8DCC4; display: flex; align-items: center; justify-content: center; color: #6B5E45; font: 14px var(--font-body); }
+.result::before, .result::after { content: ""; position: absolute; top: -10px; width: 70px; height: 22px; background: var(--tape); }
+.result::before { left: -12px; transform: rotate(-12deg); } .result::after { right: -12px; transform: rotate(10deg); }
+.label { font: 15px var(--font-hand); color: var(--ink-2); text-align: center; margin-top: 8px; }
+.polas { display: flex; gap: 10px; margin-top: 14px; }
+.pola { width: 64px; background: #FFFFFF; border: var(--line); padding: 4px 4px 14px; }
+.dark .pola { background: var(--paper-2); }
+.pola div { height: 50px; background: #E8DCC4; }
+.pola:nth-child(1) { transform: rotate(-2deg); border-bottom: 4px solid var(--highlight); } .pola:nth-child(2) { transform: rotate(1deg); } .pola:nth-child(3) { transform: rotate(-1deg); }
+.foot { font: 13px var(--font-body); color: var(--ink-2); text-align: center; margin-top: 22px; line-height: 1.6; }
+</style>
+</head>
+<body>
+<div class="board">
+  <div>
+    <p class="caption">淺色（白天的素描本）</p>
+    <div class="phone" id="light"></div>
+  </div>
+  <div>
+    <p class="caption">深色（夜晚的炭筆本）</p>
+    <div class="phone dark" id="dark"></div>
+  </div>
+</div>
+
+<template id="tpl">
+  <div class="note">測試模式：畫出來的是假圖</div>
+  <div class="head">
+    <div>
+      <div class="title">
+        AI 創意生圖小幫手
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20l1.5-5L16 4.5a2.1 2.1 0 0 1 3 3L8.5 18 4 20z"/><path d="M14 6.5l3 3"/></svg>
+      </div>
+      <svg class="squiggle" width="170" height="10" viewBox="0 0 170 10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M2 6 C 20 1, 30 9, 50 5 S 85 2, 105 6 S 145 9, 168 4"/></svg>
+    </div>
+    <span class="pill">開放中（到 14:50）</span>
+  </div>
+  <div class="quota">你今天還可以畫 8 張</div>
+
+  <div class="tabs"><div class="tab on">用文字畫圖</div><div class="tab">把照片變風格</div></div>
+
+  <h3>選一種畫風</h3>
+  <div class="styles">
+    <div class="sty on">蠟筆童畫</div><div class="sty">水彩</div><div class="sty">3D 動畫</div>
+    <div class="sty">日系動畫</div><div class="sty">普普藝術</div><div class="sty">Q 版萌系</div>
+    <div class="sty">未來科技</div>
+  </div>
+
+  <h3>你想畫什麼？</h3>
+  <div class="fill">
+    <span class="blank">戴帽子的貓</span> 在 <span class="blank">月亮上</span>
+    <span class="blank">釣星星</span>，感覺 <span class="blank">很安靜</span>
+  </div>
+  <div class="lined">戴帽子的貓，在月亮上，釣星星，感覺很安靜。</div>
+  <div class="ideas"><span class="idea">給我靈感：小貓</span><span class="idea">貓頭鷹</span><span class="idea">海豚</span></div>
+
+  <button class="go" type="button">開始畫！</button>
+  <button class="go wait" type="button">休息一下，還有 12 秒</button>
+
+  <div class="margin-note">這個描述不適合喔，換個說法試試看</div>
+
+  <div class="result">
+    <div class="frame"><div class="art">AI 畫的作品</div></div>
+  </div>
+  <div class="label">《戴帽子的貓》・蠟筆童畫・AI 生成</div>
+  <div class="polas"><div class="pola"><div></div></div><div class="pola"><div></div></div><div class="pola"><div></div></div></div>
+
+  <div class="foot">這個網站由老師提供 AI 額度，請好好使用。<br>你輸入的描述老師看得到。</div>
+</template>
+<script>
+  for (const id of ['light', 'dark']) {
+    document.getElementById(id).appendChild(document.getElementById('tpl').content.cloneNode(true));
+  }
+</script>
+</body>
+</html>

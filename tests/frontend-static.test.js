@@ -54,4 +54,27 @@ describe('前端靜態檢查', () => {
       assert.ok(!/<script>/.test(src) && !/\son[a-z]+=/.test(src), f + ' 不可有 inline <script> 或 inline 事件屬性');
     }
   });
+
+  // 2026-10-10 新增：素描本改版（說明/改版規格_素描本.md 第 2 節）
+  test('畫面上不含 emoji（api.js 的 mock 資料要跟後端一致，不檢查）', () => {
+    const files = [...htmlFiles, 'assets/style.css', ...jsFiles.filter((j) => j !== 'api.js').map((j) => 'assets/' + j)];
+    for (const f of files) {
+      if (!fs.existsSync(path.join(SITE, f))) continue;
+      read(f).split('\n').forEach((line, i) => {
+        const code = line.replace(/\/\/.*$/, '').replace(/\/\*.*?\*\//g, '').replace(/<!--.*?-->/g, '');
+        const m = code.match(/\p{Extended_Pictographic}/u);
+        assert.ok(!m, f + ':' + (i + 1) + ' 含有 emoji「' + (m && m[0]) + '」：' + line.trim());
+      });
+    }
+  });
+
+  test('有用 Google Fonts，CSP 就要允許對應網域', () => {
+    for (const f of htmlFiles) {
+      const src = read(f);
+      if (!/fonts\.googleapis\.com/.test(src)) continue;
+      const csp = (src.match(/<meta\s+http-equiv=["']Content-Security-Policy["']\s+content=(["'])(.*?)\1/i) || [])[2] || '';
+      assert.ok(/style-src[^;]*https:\/\/fonts\.googleapis\.com/.test(csp), f + ' 的 style-src 要允許 https://fonts.googleapis.com');
+      assert.ok(/font-src[^;]*https:\/\/fonts\.gstatic\.com/.test(csp), f + ' 要有 font-src https://fonts.gstatic.com');
+    }
+  });
 });

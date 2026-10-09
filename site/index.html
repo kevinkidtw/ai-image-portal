@@ -3,166 +3,162 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://script.google.com https://script.googleusercontent.com; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://script.google.com https://script.googleusercontent.com; object-src 'none'; base-uri 'none'; form-action 'none'">
   <title>AI 創意生圖小幫手</title>
-  <link rel="stylesheet" href="assets/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Iansui&family=Noto+Sans+TC:wght@400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/style.css?v=20261010">
 </head>
 <body>
-  <!-- 測試模式 Banner -->
+  <!-- 測試模式黃色便利貼 (3-1) -->
   <div id="mockBanner" class="mock-banner" style="display:none;">
-    <span>🧪 測試模式（Mock Mode）- 模擬運作中，未耗費後端額度</span>
+    <span>測試模式：畫出來的是假圖，不會用到額度</span>
   </div>
 
-  <!-- 頂部導覽列 -->
+  <!-- 頂部導覽列 (3-2) -->
   <header class="header">
     <div class="header-content">
       <div class="brand">
-        <span class="brand-icon">🎨</span>
         <div>
-          <h1 id="siteTitle" class="brand-title">AI 創意生圖小幫手</h1>
-          <div id="schoolName" class="brand-school">國小課堂 AI 探索</div>
+          <div class="brand-title-wrap">
+            <h1 id="siteTitle" class="brand-title">AI 創意生圖小幫手</h1>
+            <svg class="doodle-pencil" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20l1.5-5L16 4.5a2.1 2.1 0 0 1 3 3L8.5 18 4 20z"></path><path d="M14 6.5l3 3"></path></svg>
+          </div>
+          <svg class="squiggle" width="170" height="10" viewBox="0 0 170 10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M2 6 C 20 1, 30 9, 50 5 S 85 2, 105 6 S 145 9, 168 4"></path></svg>
+          <div id="schoolName" class="brand-school" style="display:none;">國小課堂 AI 探索</div>
         </div>
       </div>
       <div class="status-badge-group">
-        <span id="statusLight" class="status-indicator open">🟢 檢查狀態中…</span>
-        <span id="remainingBadge" class="quota-indicator">今日剩餘：-- 次</span>
+        <span id="statusLight" class="status-indicator open">檢查狀態中…</span>
+        <div id="remainingBadge" class="quota-indicator">你今天還可以畫 -- 張</div>
       </div>
     </div>
   </header>
 
   <main class="container">
-    <!-- 友善錯誤或通知橫幅 -->
+    <!-- 提示訊息（批註風格 3-8） -->
     <div id="alertBox" class="alert-box warning" style="display:none;" role="alert">
-      <span id="alertIcon" class="alert-icon">💡</span>
+      <span id="alertIcon" class="alert-icon" style="display:none;"></span>
       <div id="alertText">通知訊息</div>
     </div>
 
-    <!-- 班級通行碼輸入卡片（未驗證時顯示） -->
+    <!-- 班級通行碼輸入卡片 (3-9) -->
     <div id="classCodeCard" class="card class-code-overlay" style="display:none;">
       <div class="class-code-box">
-        <div style="font-size:48px;margin-bottom:12px;">🔑</div>
-        <h2 style="font-size:22px;margin-bottom:8px;">請輸入班級通行碼</h2>
-        <p id="classCodeNotice" style="color:var(--text-muted);margin-bottom:20px;">老師會在黑板或投影幕上公布今日的 4 位數字通行碼喔！</p>
-        <input type="text" id="classCodeInput" class="class-code-input" inputmode="numeric" pattern="[0-9]*" maxlength="8" placeholder="例如 1234">
-        <button id="classCodeBtn" class="action-btn">確認通行碼</button>
+        <h2 class="class-code-title">輸入班級通行碼</h2>
+        <p id="classCodeNotice" class="class-code-notice">老師會在黑板或投影幕上公布今日的 4 位數字通行碼喔！</p>
+        <input type="text" id="classCodeInput" class="class-code-input" inputmode="numeric" pattern="[0-9]*" maxlength="8" placeholder="1234">
+        <button id="classCodeBtn" class="action-btn" type="button">確認通行碼</button>
       </div>
     </div>
 
     <!-- 學生主要生圖工作區 -->
     <div id="mainWorkspace">
-      <!-- 畫圖模式切換 -->
+      <!-- 畫圖模式切換 (3-3) -->
       <div class="mode-selector" role="tablist">
-        <button id="modeTextBtn" class="mode-btn active" role="tab" aria-selected="true">✏️ 用文字畫圖</button>
-        <button id="modePhotoBtn" class="mode-btn" role="tab" aria-selected="false">📷 把照片變風格</button>
+        <button id="modeTextBtn" class="mode-btn active" role="tab" aria-selected="true" type="button">用文字畫圖</button>
+        <button id="modePhotoBtn" class="mode-btn" role="tab" aria-selected="false" type="button">把照片變風格</button>
       </div>
 
       <!-- 照片模式拍照/選檔區 -->
       <div id="photoSection" class="card" style="display:none;">
-        <h2 class="card-title">📷 上傳你的照片</h2>
+        <h2 class="card-title">上傳你的照片</h2>
         <div class="photo-uploader">
           <input type="file" id="cameraFileInput" class="upload-file-input" accept="image/*" capture="environment">
           <input type="file" id="albumFileInput" class="upload-file-input" accept="image/*">
           <div id="uploadBtnGroup" style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
-            <button id="cameraTriggerBtn" class="upload-trigger-btn" type="button">📷 拍照</button>
-            <button id="albumTriggerBtn" class="upload-trigger-btn" type="button">🖼️ 從相簿選</button>
+            <button id="cameraTriggerBtn" class="upload-trigger-btn" type="button">拍照</button>
+            <button id="albumTriggerBtn" class="upload-trigger-btn" type="button">從相簿選</button>
           </div>
           <div id="photoPreviewBox" class="photo-preview-box" style="display:none;">
             <img id="photoPreviewImg" class="photo-preview-img" alt="上傳的照片預覽">
-            <button id="removePhotoBtn" class="remove-photo-btn" title="移除照片">✕</button>
+            <button id="removePhotoBtn" class="remove-photo-btn" title="移除照片" type="button">✕</button>
           </div>
-          <p style="font-size:13px;color:var(--text-muted);margin-top:10px;">照片會自動壓縮，絕不保存到伺服器，請安心使用</p>
+          <p class="photo-note">照片會自動壓縮，絕不保存到伺服器，請安心使用</p>
         </div>
       </div>
 
-      <!-- 風格選擇區 -->
+      <!-- 風格選擇區 (3-3) -->
       <div class="card">
-        <h2 class="card-title">🎨 第一步：選擇藝術風格</h2>
+        <h2 class="card-title">選一種畫風</h2>
         <div id="stylesGrid" class="styles-grid">
           <!-- 由 JS 動態渲染 7 種風格卡片 -->
         </div>
       </div>
 
-      <!-- 描述小幫手區 -->
+      <!-- 描述小幫手區 (3-3) -->
       <div class="card">
-        <h2 class="card-title">💡 第二步：你想畫什麼？</h2>
+        <h2 class="card-title">你想畫什麼？</h2>
 
-        <!-- 兒童引導小欄位（AI 素養） -->
-        <div class="helper-grid">
-          <div class="helper-field">
-            <label for="subjectInput">👦 主角是誰？</label>
-            <input type="text" id="subjectInput" placeholder="例如：戴著太空帽的小橘貓">
-          </div>
-          <div class="helper-field">
-            <label for="actionInput">🛹 在做什麼？</label>
-            <input type="text" id="actionInput" placeholder="例如：踩著彩虹滑板向前衝">
-          </div>
-          <div class="helper-field">
-            <label for="locationInput">🌌 在哪裡？</label>
-            <input type="text" id="locationInput" placeholder="例如：在粉彩色的星雲宇宙中">
-          </div>
-          <div class="helper-field">
-            <label for="feelingInput">✨ 感覺或顏色？</label>
-            <input type="text" id="feelingInput" placeholder="例如：充滿冒險精神與夢幻星光">
-          </div>
+        <!-- 兒童引導小欄位（填空句設計） -->
+        <div class="helper-fill">
+          <input type="text" id="subjectInput" class="blank-input" placeholder="戴帽子的貓" aria-label="主角是誰"> 在 
+          <input type="text" id="locationInput" class="blank-input" placeholder="月亮上" aria-label="在哪裡"> 
+          <input type="text" id="actionInput" class="blank-input" placeholder="釣星星" aria-label="做什麼">，感覺 
+          <input type="text" id="feelingInput" class="blank-input" placeholder="很安靜" aria-label="感覺或顏色">
         </div>
 
         <!-- 給我靈感快捷按鈕 -->
         <div class="inspiration-bar">
-          <span style="font-size:14px;font-weight:700;color:var(--text-muted);">給我靈感：</span>
-          <button class="inspiration-btn" data-inspire="cat">🐱 太空小貓</button>
-          <button class="inspiration-btn" data-inspire="owl">🦉 魔法樹屋</button>
-          <button class="inspiration-btn" data-inspire="dolphin">🐬 夢幻海洋</button>
+          <span class="inspiration-label">給我靈感：</span>
+          <button class="inspiration-btn" data-inspire="cat" type="button">太空小貓</button>
+          <button class="inspiration-btn" data-inspire="owl" type="button">魔法樹屋</button>
+          <button class="inspiration-btn" data-inspire="dolphin" type="button">夢幻海洋</button>
         </div>
 
-        <!-- 最終送給 AI 的完整描述 -->
+        <!-- 最終送給 AI 的完整描述（橫格紙底色） -->
         <div class="prompt-area-wrapper">
-          <label for="promptTextarea" style="display:block;font-size:14px;font-weight:700;margin-bottom:6px;color:var(--text-muted);">AI 會收到的描述（可自由微調）：</label>
+          <label for="promptTextarea" class="prompt-label">AI 會收到的描述（可自由微調）：</label>
           <textarea id="promptTextarea" class="prompt-textarea" placeholder="點擊上方靈感按鈕，或由小幫手組合成完整描述…" maxlength="300"></textarea>
           <div id="charCounter" class="char-counter">0 / 300</div>
         </div>
 
-        <!-- 開始畫圖按鈕 -->
-        <button id="startBtn" class="action-btn">🚀 開始畫圖</button>
+        <!-- 開始畫圖按鈕 (3-4) -->
+        <button id="startBtn" class="action-btn" type="button">開始畫！</button>
 
-        <!-- 進度條與提示輪播 -->
+        <!-- 進度條與提示輪播 (3-5) -->
         <div id="loadingBox" class="loading-box" style="display:none;">
-          <div class="progress-bar-container">
-            <div id="progressBar" class="progress-bar-fill"></div>
+          <div class="sketch-loader">
+            <svg class="pencil-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20l1.5-5L16 4.5a2.1 2.1 0 0 1 3 3L8.5 18 4 20z"></path><path d="M14 6.5l3 3"></path></svg>
+            <svg class="doodle-wave" width="160" height="16" viewBox="0 0 160 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path class="wave-path" d="M 4 8 Q 20 0, 36 8 T 68 8 T 100 8 T 132 8 T 156 8"></path></svg>
           </div>
+          <div id="progressBar" class="progress-bar-fill" style="display:none;"></div>
           <div id="loadingTips" class="loading-tips">AI 正在想像你的畫面…</div>
         </div>
       </div>
 
-      <!-- 生圖成果展示區 -->
+      <!-- 生圖成果展示區 (3-6) -->
       <div id="resultCard" class="card result-card" style="display:none;">
-        <h2 class="card-title" style="justify-content:center;">🎉 你的 AI 畫作完成囉！</h2>
+        <h2 class="card-title" style="justify-content:center;">AI 畫的作品</h2>
         <div class="artwork-display">
           <img id="artworkImage" class="artwork-image" alt="AI 生成的作品">
         </div>
+        <div id="artworkLabel" class="artwork-label"></div>
         <div class="result-actions">
-          <button id="downloadBtn" class="action-btn" style="width:auto;padding:12px 28px;">📥 下載作品 (附 AI 標示)</button>
-          <button id="restartBtn" class="btn-secondary">🔄 再畫一張</button>
+          <button id="downloadBtn" class="action-btn" style="width:auto;padding:8px 28px;" type="button">下載這張</button>
+          <button id="restartBtn" class="btn-secondary" type="button">再畫一張</button>
         </div>
       </div>
 
-      <!-- 這節課的作品歷史縮圖 -->
+      <!-- 這節課的作品歷史縮圖 (3-7) -->
       <div class="card">
-        <h2 class="card-title">🖼️ 這節課的作品</h2>
+        <h2 class="card-title">這節課的作品</h2>
         <div id="galleryStrip" class="gallery-strip">
-          <p style="color:var(--text-muted);font-size:14px;padding:10px 0;">開始畫圖後，你的作品會暫存在這裡喔！</p>
+          <p style="color:var(--ink-2);font-size:14px;padding:10px 0;font-family:var(--font-hand);">開始畫圖後，你的作品會暫存在這裡喔！</p>
         </div>
       </div>
     </div>
   </main>
 
-  <!-- 頁尾 -->
+  <!-- 頁尾 (3-10) -->
   <footer class="footer">
-    這個網站由老師提供 AI 額度，請好好使用 🙏　你輸入的描述老師看得到。
+    這個網站由老師提供 AI 額度，請好好使用。你輸入的描述老師看得到。
   </footer>
 
-  <script src="assets/config.js"></script>
-  <script src="assets/image.js"></script>
-  <script src="assets/api.js"></script>
-  <script src="assets/app.js"></script>
+  <script src="assets/config.js?v=20261010"></script>
+  <script src="assets/image.js?v=20261010"></script>
+  <script src="assets/api.js?v=20261010"></script>
+  <script src="assets/app.js?v=20261010"></script>
 </body>
 </html>
