@@ -222,6 +222,26 @@ describe('整合測試：學生端', () => {
     assert.ok(last.includes('API key not valid'), 'PLAN 3-1：原始錯誤要寫進紀錄表，實際最後一列：' + last);
   });
 
+  // 2026-10-11 新增：真機測試發現，供應商出錯後同一台裝置馬上再按，會被 COOLDOWN 擋 20 秒
+  test('供應商出錯或逾時後，冷卻時間也要一起退還，學生可以馬上重試', () => {
+    for (const fail of [() => ({ code: 429, text: fixture('gemini-error.json') }), () => { throw new Error('Timeout'); }]) {
+      const env = makeEnv({ COOLDOWN_SEC: '20' });
+      env.setFetch(fail);
+      assert.strictEqual(env.post(gen()).code, 'PROVIDER_ERROR');
+      env.setFetch(() => ({ code: 200, text: fixture('gemini-success.json') }));
+      const r = env.post(gen());
+      assert.strictEqual(r.ok, true, '失敗後馬上重試不該被冷卻擋下：' + JSON.stringify(r));
+      assert.strictEqual(env.post(gen()).code, 'COOLDOWN', '成功之後冷卻要照常生效');
+    }
+  });
+
+  test('安全阻擋不退還冷卻（避免學生一直試不當內容）', () => {
+    const env = makeEnv({ COOLDOWN_SEC: '20' });
+    env.setFetch(() => ({ code: 200, text: fixture('gemini-safety-finish.json') }));
+    assert.strictEqual(env.post(gen()).code, 'SAFETY_BLOCKED');
+    assert.strictEqual(env.post(gen()).code, 'COOLDOWN');
+  });
+
   test('UrlFetchApp 拋例外（逾時）：PROVIDER_ERROR、額度退還、in-flight 歸零', () => {
     const env = makeEnv();
     env.setFetch(() => { throw new Error('Timeout: https://generativelanguage.googleapis.com'); });
@@ -249,13 +269,13 @@ describe('整合測試：學生端', () => {
     assert.strictEqual(stats.data.blocked, 1, '後台的被擋數要算到它');
   });
 
-  test('欄位不合法被擋下時也要寫紀錄，且描述會截斷到 300 字', () => {
+  test('欄位不合法被擋下時也要寫紀錄，且描述會截斷到 600 字', () => {
     const env = makeEnv();
     const r = env.post(gen({ prompt: '貓'.repeat(5000) }));
     assert.strictEqual(r.code, 'BAD_REQUEST');
     const last = env.rows[env.rows.length - 1];
     assert.ok(last.includes('BAD_REQUEST'));
-    assert.ok(last.every((c) => String(c).length <= 300), '紀錄的每一格都不可超過 300 字');
+    assert.ok(last.every((c) => String(c).length <= 600), '紀錄的每一格都不可超過 600 字（2026-10-11：描述上限改為 600）');
   });
 
   test('紀錄表壞掉時，生圖仍然成功', () => {

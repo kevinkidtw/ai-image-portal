@@ -47,6 +47,7 @@ function doGet(e) {
       var styles = [];
       for (var i = 0; i < Logic.STYLES.length; i++) {
         var s = Logic.STYLES[i];
+        if (s.id === 'free') continue;
         styles.push({ id: s.id, label: s.label, emoji: s.emoji });
       }
 
@@ -153,6 +154,7 @@ function handleGenerate(body, startTime) {
   var errorDetail = '';
   var dateKey = '';
   var config = null;
+  var previousLastRequestTime = 0;
 
   try {
     // 步驟 1: 驗證欄位（長度、mode、style 白名單、圖片大小 ≤ 4 MB base64）
@@ -200,6 +202,7 @@ function handleGenerate(body, startTime) {
 
       var state = Store.getState(body.deviceId, dateKey);
       state.inputClassCode = body.classCode || '';
+      previousLastRequestTime = state.lastDeviceRequestTime || 0;
       var now = Date.now();
       var quotaRes = Logic.decideQuota(state, config, now);
 
@@ -300,7 +303,7 @@ function handleGenerate(body, startTime) {
       if (lock.tryLock(10000)) {
         try {
           var currStateForRefund = Store.getState(body.deviceId, dateKey);
-          Store.refundQuota(currStateForRefund, dateKey);
+          Store.refundQuota(currStateForRefund, dateKey, previousLastRequestTime);
         } finally {
           // [鎖釋放點 2]
           lock.releaseLock();
@@ -325,7 +328,7 @@ function handleGenerate(body, startTime) {
       if (lock.tryLock(10000)) {
         try {
           var currStateErr = Store.getState(body.deviceId, dateKey);
-          Store.refundQuota(currStateErr, dateKey);
+          Store.refundQuota(currStateErr, dateKey, previousLastRequestTime);
         } finally {
           // [鎖釋放點 3]
           lock.releaseLock();

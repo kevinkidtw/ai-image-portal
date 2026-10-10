@@ -216,6 +216,28 @@ describe('Logic.gs 單元測試', () => {
       assert.deepStrictEqual(refunded.inFlightRequests, [1000]);
     });
 
+    test('refundQuota 恢復冷卻時間至指定 previousLastRequestTime，未提供或無效時設為 0', () => {
+      const state = {
+        dailyGlobalCount: 5,
+        deviceDailyCount: 2,
+        lastDeviceRequestTime: 1728200050000,
+        inFlightRequests: [1000]
+      };
+      const prevTime = 1728200010000;
+      const refunded = Logic.refundQuota(state, prevTime);
+      assert.strictEqual(refunded.lastDeviceRequestTime, prevTime);
+      assert.strictEqual(refunded.dailyGlobalCount, 4);
+      assert.strictEqual(refunded.deviceDailyCount, 1);
+
+      // 未提供 previousLastRequestTime 時預設為 0
+      const refundedZero = Logic.refundQuota(state);
+      assert.strictEqual(refundedZero.lastDeviceRequestTime, 0);
+
+      // 提供非有限數字時亦預設為 0
+      const refundedInvalid = Logic.refundQuota(state, 'invalid');
+      assert.strictEqual(refundedInvalid.lastDeviceRequestTime, 0);
+    });
+
     test('releaseInFlight 精確移除指定 timestamp，不影響其他請求 (必修 3)', () => {
       const t1 = 1000;
       const t2 = 2000;
@@ -349,11 +371,17 @@ describe('Logic.gs 單元測試', () => {
       assert.strictEqual(Logic.validateRequest(req2).valid, false);
     });
 
-    test('prompt 超過 300 字時回傳 BAD_REQUEST', () => {
-      const req = { ...validTextReq, prompt: 'a'.repeat(301) };
+    test('prompt 超過 600 字時回傳 BAD_REQUEST', () => {
+      const req = { ...validTextReq, prompt: 'a'.repeat(601) };
       const res = Logic.validateRequest(req);
       assert.strictEqual(res.valid, false);
       assert.strictEqual(res.code, 'BAD_REQUEST');
+    });
+
+    test('free 風格通過 validateRequest', () => {
+      const req = { ...validTextReq, style: 'free' };
+      const res = Logic.validateRequest(req);
+      assert.strictEqual(res.valid, true);
     });
 
     test('prompt 含有 < 或 > 時回傳 BAD_REQUEST (必修 1 後端防護)', () => {
@@ -480,6 +508,13 @@ describe('Logic.gs 單元測試', () => {
       assert.ok(photoPrompt.includes(pixarStyle.photoPrompt));
       assert.notStrictEqual(textPrompt, photoPrompt);
     });
+
+    test('buildPrompt 遇到 free 風格不輸出 Style instruction，但以安全前綴開頭', () => {
+      const p = Logic.buildPrompt('free', '測試畫一隻貓');
+      assert.ok(p.startsWith(Logic.SAFETY_PREFIX));
+      assert.ok(!p.includes('Style instruction:'));
+      assert.ok(p.includes('測試畫一隻貓'));
+    });
   });
 
   // -------------------------------------------------------------
@@ -541,16 +576,21 @@ describe('Logic.gs 單元測試', () => {
   // 8. 風格表與錯誤訊息常數完整性
   // -------------------------------------------------------------
   describe('常數表完整性', () => {
-    test('風格表包含 7 種預設風格且欄位齊全', () => {
-      assert.strictEqual(Logic.STYLES.length, 7);
-      const expectedIds = ['pixar', 'watercolor', 'cyberpunk', 'anime', 'popart', 'chibi', 'crayon'];
+    test('風格表包含 8 種預設風格且欄位齊全', () => {
+      assert.strictEqual(Logic.STYLES.length, 8);
+      const expectedIds = ['pixar', 'watercolor', 'cyberpunk', 'anime', 'popart', 'chibi', 'crayon', 'free'];
       expectedIds.forEach(id => {
         const style = Logic.STYLES.find(s => s.id === id);
         assert.ok(style, `缺少風格: ${id}`);
         assert.ok(style.label);
         assert.ok(style.emoji);
-        assert.ok(style.textPrompt);
-        assert.ok(style.photoPrompt);
+        if (id === 'free') {
+          assert.strictEqual(style.textPrompt, '');
+          assert.strictEqual(style.photoPrompt, '');
+        } else {
+          assert.ok(style.textPrompt);
+          assert.ok(style.photoPrompt);
+        }
       });
     });
 

@@ -8,6 +8,13 @@
  */
 var STYLES = [
   {
+    id: 'free',
+    label: '✍️ 自訂風格',
+    emoji: '✍️',
+    textPrompt: '',
+    photoPrompt: ''
+  },
+  {
     id: 'pixar',
     label: '🎬 3D 動畫風',
     emoji: '🎬',
@@ -219,12 +226,12 @@ function validateRequest(body) {
       error: 'prompt is required and must be non-empty string'
     };
   }
-  if (body.prompt.length > 300) {
+  if (body.prompt.length > 600) {
     return {
       valid: false,
       code: 'BAD_REQUEST',
       message: ERROR_MESSAGES.BAD_REQUEST,
-      error: 'prompt must not exceed 300 characters'
+      error: 'prompt must not exceed 600 characters'
     };
   }
   if (/[<>]/.test(body.prompt)) {
@@ -377,9 +384,12 @@ function buildPrompt(styleId, userPrompt, mode) {
 
   var cleanUserPrompt = (userPrompt || '').trim();
 
-  return SAFETY_PREFIX + '\n' +
-    'Style instruction: ' + stylePrompt + '\n' +
-    'Student description: ' + cleanUserPrompt;
+  var lines = [SAFETY_PREFIX];
+  if (stylePrompt && stylePrompt.trim() !== '') {
+    lines.push('Style instruction: ' + stylePrompt);
+  }
+  lines.push('Student description: ' + cleanUserPrompt);
+  return lines.join('\n');
 }
 
 /**
@@ -540,23 +550,27 @@ function decideQuota(state, config, now) {
 }
 
 /**
- * 退還額度純函式（PLAN.md 第 4-2、7-1 節）
+ * 退還額度純函式（PLAN.md 第 4-2、7-1 節，附錄：冷卻退還）
  * 供應商錯誤或逾時時退還預扣額度，計數回到原值且保證不為負數
- * 注意：只退還 dailyGlobalCount 和 deviceDailyCount，絕不碰 in-flight
+ * 同時恢復冷卻時間至這次請求之前的值
+ * 注意：只退還 dailyGlobalCount、deviceDailyCount 與 lastDeviceRequestTime，絕不碰 in-flight
  * @param {Object} state
+ * @param {number} [previousLastRequestTime]
  * @returns {Object} nextState
  */
-function refundQuota(state) {
+function refundQuota(state, previousLastRequestTime) {
   if (!state || typeof state !== 'object') {
     return {};
   }
 
   var newGlobal = Math.max(0, (state.dailyGlobalCount || 0) - 1);
   var newDevice = Math.max(0, (state.deviceDailyCount || 0) - 1);
+  var prevTime = (typeof previousLastRequestTime === 'number' && Number.isFinite(previousLastRequestTime)) ? previousLastRequestTime : 0;
 
   return Object.assign({}, state, {
     dailyGlobalCount: newGlobal,
-    deviceDailyCount: newDevice
+    deviceDailyCount: newDevice,
+    lastDeviceRequestTime: prevTime
   });
 }
 

@@ -68,6 +68,17 @@ describe('前端靜態檢查', () => {
     }
   });
 
+  // 2026-10-11 新增：年段分級改版（說明/改版規格_年段分級.md 第 7 節）
+  test('網站一律淺色：沒有深色模式，並宣告 color-scheme: light', () => {
+    const css = read('assets/style.css');
+    assert.ok(!/prefers-color-scheme\s*:\s*dark/.test(css), 'style.css 不可再有深色模式');
+    assert.ok(!/data-theme\s*=\s*["']?dark/.test(css), 'style.css 不可有深色主題選擇器');
+    assert.ok(/color-scheme\s*:\s*light/.test(css), 'style.css 的 :root 要宣告 color-scheme: light');
+    for (const f of htmlFiles) {
+      assert.ok(/<meta\s+name=["']color-scheme["']\s+content=["']light["']/.test(read(f)), f + ' 要有 <meta name="color-scheme" content="light">');
+    }
+  });
+
   test('有用 Google Fonts，CSP 就要允許對應網域', () => {
     for (const f of htmlFiles) {
       const src = read(f);

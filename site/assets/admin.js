@@ -115,6 +115,7 @@ document.addEventListener('DOMContentLoaded', function() {
   function renderAllDashboard() {
     renderOpenStatus();
     renderClassCode();
+    renderStudentUrls();
     renderStats();
     renderConfigForm();
     loadLogs();
@@ -225,6 +226,49 @@ document.addEventListener('DOMContentLoaded', function() {
       });
     });
   }
+
+  // 2-2. 學生網址渲染與複製
+  function renderStudentUrls() {
+    var loc = window.location;
+    var path = loc.pathname;
+    var base = loc.origin;
+    if (path.endsWith('admin.html')) {
+      base += path.substring(0, path.length - 'admin.html'.length) + 'index.html';
+    } else if (path.endsWith('/')) {
+      base += path + 'index.html';
+    } else {
+      var lastSlash = path.lastIndexOf('/');
+      if (lastSlash !== -1) {
+        base += path.substring(0, lastSlash + 1) + 'index.html';
+      } else {
+        base += '/index.html';
+      }
+    }
+    var mEl = document.getElementById('urlMiddle');
+    var uEl = document.getElementById('urlUpper');
+    var jEl = document.getElementById('urlJunior');
+    if (mEl) mEl.textContent = base + '?level=middle';
+    if (uEl) uEl.textContent = base + '?level=upper';
+    if (jEl) jEl.textContent = base + '?level=junior';
+  }
+
+  document.querySelectorAll('.copy-url-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var targetId = btn.dataset.urlId;
+      var targetEl = document.getElementById(targetId);
+      if (targetEl && targetEl.textContent && navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(targetEl.textContent).then(function() {
+          var origText = btn.textContent;
+          btn.textContent = '已複製';
+          setTimeout(function() {
+            btn.textContent = origText;
+          }, 1500);
+        }).catch(function() {
+          // fallback
+        });
+      }
+    });
+  });
 
   // 3. 用量與統計
   function renderStats() {

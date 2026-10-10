@@ -125,7 +125,7 @@ AI生圖入口網站/
 | action | 方法 | 請求欄位 | 回應 `data` |
 |---|---|---|---|
 | `status` | GET | `classCode`（選填）、`deviceId` | `{ open, openUntil, needCode, codeOk, styles:[{id,label,emoji}], remainingToday, deviceRemaining, cooldownSec, mode:{text:true, photo:true} }` |
-| `generate` | POST | `classCode`, `deviceId`, `mode`(`text`/`photo`), `style`, `prompt`, `image`(base64，photo 模式才有), `imageMime` | `{ image(base64), mime, deviceRemaining, remainingToday, requestId }` |
+| `generate` | POST | `classCode`, `deviceId`, `mode`(`text`/`photo`), `style`（白名單，含 `free` 自訂風格與 7 種預設風格）, `prompt`（上限 600 字元）, `image`(base64，photo 模式才有), `imageMime` | `{ image(base64), mime, deviceRemaining, remainingToday, requestId }` |
 
 ### 3-3 老師端 action（全部 POST，全部要 `adminPassword`）
 
@@ -214,7 +214,7 @@ generate 流程：
 - 本地關鍵字黑名單（中英文，放在 `Logic.gs` 的常數）：暴力、血腥、色情、自殘、毒品、武器等類別，各類 10–20 個詞，比對前先轉小寫、去空白、全形轉半形。
 - Gemini：`safetySettings` 四個類別都設 `BLOCK_LOW_AND_ABOVE`。
 - OpenAI：文字模式（generations）加 `moderation: "auto"`；edits 端點沒有這個參數，不要送（2026-10-07 已查證）。
-- prompt 長度上限 300 字元。
+- prompt 長度上限 600 字元（年段分級改版調升）。
 
 ### 4-5 個資與學生肖像
 
@@ -469,8 +469,9 @@ generate 流程：
 | `popart` | 🟡 普普藝術風 | A vibrant pop art illustration, bold colors, high contrast, halftone dots | Transform this photo into vibrant pop art, bold colors, high contrast, halftone dots |
 | `chibi` | 🐱 Q 版萌系風 | A cute chibi character illustration, big sparkly eyes, pastel colors, kawaii | Transform this photo into a cute chibi character, big sparkly eyes, tiny body, pastel colors |
 | `crayon` | 🖍️ 蠟筆童畫風 | A children's crayon drawing style illustration, bright colors, playful, textured paper | Transform this photo into a children's crayon drawing, bright colors, playful, textured paper |
+| `free` | ✍️ 自訂風格 | （無額外風格指令，由學生自行於第 ⑦ 段或提示詞中描述畫風） | （無額外風格指令，由學生自行於提示詞中描述畫風） |
 
-> 參考網站的「吉卜力」「皮克敏」等直接點名特定公司或角色，有著作權與商標疑慮，而且供應商可能拒絕生成。這裡改成描述畫風、不點名。這是 AI 素養課可以順便討論的題目。
+> 參考網站的「吉卜力」「皮克敏」等直接點名特定公司或角色，有著作權與商標疑慮，而且供應商可能拒絕生成。這裡改成描述畫風、不點名。這是 AI 素養課可以順便討論的題目。`free` 風格適用於國中八段式提示詞或進階創作，後端不輸出預設風格指令，僅保留安全前綴。
 
 ## 附錄 B：後端安全前綴（固定加在所有 prompt 最前面）
 

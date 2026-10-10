@@ -193,18 +193,22 @@ var Store = {
   },
 
   /**
-   * 退還額度（在鎖內執行，僅退還計數）
+   * 退還額度與冷卻（在鎖內執行，退還計數並恢復冷卻時間）
    * @param {Object} state
    * @param {string} dateKey
+   * @param {number} [previousLastRequestTime]
    */
-  refundQuota: function(state, dateKey) {
-    var nextState = Logic.refundQuota(state);
+  refundQuota: function(state, dateKey, previousLastRequestTime) {
+    var nextState = Logic.refundQuota(state, previousLastRequestTime);
     var props = PropertiesService.getScriptProperties();
     var cache = CacheService.getScriptCache();
 
     props.setProperty('count_' + dateKey, String(nextState.dailyGlobalCount));
     var deviceKey = 'dev_' + dateKey + '_' + state.deviceId;
     cache.put(deviceKey, String(nextState.deviceDailyCount), 21600);
+
+    var coolKey = 'cool_' + state.deviceId;
+    cache.put(coolKey, String(nextState.lastDeviceRequestTime), 21600);
 
     return nextState;
   },
@@ -249,7 +253,7 @@ var Store = {
         sanitize(devShort),
         sanitize(record.mode || ''),
         sanitize(record.style || ''),
-        sanitize(String(record.prompt || '').substring(0, 300)),
+        sanitize(String(record.prompt || '').substring(0, 600)),
         sanitize(record.resultCode || ''),
         record.durationMs || 0,
         sanitize(record.provider || ''),

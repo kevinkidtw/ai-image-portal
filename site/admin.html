@@ -3,12 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://script.google.com https://script.googleusercontent.com; object-src 'none'; base-uri 'none'; form-action 'none'">
   <title>教師管理後台 — AI 創意生圖小幫手</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Iansui&family=Noto+Sans+TC:wght@400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/style.css?v=20261010">
+  <link rel="stylesheet" href="assets/style.css?v=20261011">
 </head>
 <body>
   <!-- 測試模式黃色便利貼 -->
@@ -76,6 +77,29 @@
           <div style="display:flex;gap:10px;justify-content:center;">
             <button id="newCodeBtn" class="quick-btn" type="button">產生新通行碼</button>
             <button id="clearCodeBtn" class="quick-btn" type="button">免通行碼</button>
+          </div>
+        </div>
+
+        <!-- 區塊 2-2: 學生網址卡片 (6 節) -->
+        <div class="card">
+          <h3 class="card-title">學生網址（分年段連結）</h3>
+          <p style="font-size:13px;color:var(--ink-2);margin-bottom:12px;">複製對應年段的連結給班級學生，學生進入後可直接使用該年段介面</p>
+          <div class="student-urls-list">
+            <div class="student-url-row">
+              <span class="url-level-badge">中年級</span>
+              <span id="urlMiddle" class="url-display"></span>
+              <button type="button" class="quick-btn copy-url-btn" data-url-id="urlMiddle">複製</button>
+            </div>
+            <div class="student-url-row">
+              <span class="url-level-badge">高年級</span>
+              <span id="urlUpper" class="url-display"></span>
+              <button type="button" class="quick-btn copy-url-btn" data-url-id="urlUpper">複製</button>
+            </div>
+            <div class="student-url-row">
+              <span class="url-level-badge">國中</span>
+              <span id="urlJunior" class="url-display"></span>
+              <button type="button" class="quick-btn copy-url-btn" data-url-id="urlJunior">複製</button>
+            </div>
           </div>
         </div>
 
@@ -194,8 +218,8 @@
     AI 創意生圖入口網站 • 教師私有管理控制台
   </footer>
 
-  <script src="assets/config.js?v=20261010"></script>
-  <script src="assets/api.js?v=20261010"></script>
-  <script src="assets/admin.js?v=20261010"></script>
+  <script src="assets/config.js?v=20261011"></script>
+  <script src="assets/api.js?v=20261011"></script>
+  <script src="assets/admin.js?v=20261011"></script>
 </body>
 </html>

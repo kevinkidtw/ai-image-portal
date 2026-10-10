@@ -36,60 +36,7 @@
   --danger: var(--pencil-red);
   --success: var(--pencil-green);
   --warning: var(--ink-2);
-}
-
-/* 深色模式（夜晚的炭筆本）與 .dark 類別 */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --paper: #1C1B18;
-    --paper-2: #25231F;
-    --ink: #F1ECE0;
-    --ink-2: #B9B2A3;
-    --rule: #3A3731;
-    --highlight: #F2C230;
-    --on-highlight: #1F1F1F;
-    --pencil-red: #FF8787;
-    --pencil-green: #69DB7C;
-    --tape: rgba(242, 194, 48, 0.45);
-    /* 重新宣告以確保深色下解析正確 */
-    --line: 1.5px solid var(--ink);
-    --line-dashed: 1.5px dashed var(--ink);
-
-    --bg-color: var(--paper);
-    --card-bg: var(--paper);
-    --text-main: var(--ink);
-    --text-muted: var(--ink-2);
-    --border-color: var(--ink);
-    --primary: var(--highlight);
-    --danger: var(--pencil-red);
-    --success: var(--pencil-green);
-    --warning: var(--ink-2);
-  }
-}
-
-.dark {
-  --paper: #1C1B18;
-  --paper-2: #25231F;
-  --ink: #F1ECE0;
-  --ink-2: #B9B2A3;
-  --rule: #3A3731;
-  --highlight: #F2C230;
-  --on-highlight: #1F1F1F;
-  --pencil-red: #FF8787;
-  --pencil-green: #69DB7C;
-  --tape: rgba(242, 194, 48, 0.45);
-  --line: 1.5px solid var(--ink);
-  --line-dashed: 1.5px dashed var(--ink);
-
-  --bg-color: var(--paper);
-  --card-bg: var(--paper);
-  --text-main: var(--ink);
-  --text-muted: var(--ink-2);
-  --border-color: var(--ink);
-  --primary: var(--highlight);
-  --danger: var(--pencil-red);
-  --success: var(--pencil-green);
-  --warning: var(--ink-2);
+  color-scheme: light;
 }
 
 /* 全域重設與基礎排版 */
@@ -418,9 +365,6 @@ h1, h2, h3, h4, h5, h6, button, .brand-title, .pill, .quota-indicator {
   border-radius: 4px;
 }
 
-.dark .photo-preview-box {
-  background: var(--paper-2);
-}
 
 .photo-preview-img {
   max-width: 100%;
@@ -721,15 +665,7 @@ h1, h2, h3, h4, h5, h6, button, .brand-title, .pill, .quota-indicator {
   max-width: 95%;
 }
 
-@media (prefers-color-scheme: dark) {
-  .artwork-display {
-    background: var(--paper-2);
-  }
-}
 
-.dark .artwork-display {
-  background: var(--paper-2);
-}
 
 .artwork-display::before,
 .artwork-display::after {
@@ -814,15 +750,7 @@ h1, h2, h3, h4, h5, h6, button, .brand-title, .pill, .quota-indicator {
   box-sizing: border-box;
 }
 
-@media (prefers-color-scheme: dark) {
-  .gallery-thumb {
-    background: var(--paper-2);
-  }
-}
 
-.dark .gallery-thumb {
-  background: var(--paper-2);
-}
 
 .gallery-thumb:nth-child(3n+1) { transform: rotate(-2deg); }
 .gallery-thumb:nth-child(3n+2) { transform: rotate(1deg); }
@@ -925,6 +853,50 @@ h1, h2, h3, h4, h5, h6, button, .brand-title, .pill, .quota-indicator {
     letter-spacing: 4px;
     padding: 16px 8px;
   }
+}
+
+/* 學生網址卡片樣式（6 節） */
+.student-urls-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 12px 0;
+}
+
+.student-url-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--paper-2);
+  padding: 8px 12px;
+  border-radius: var(--wobble-1);
+  border: var(--line-dashed);
+}
+
+.url-level-badge {
+  font-family: var(--font-hand);
+  font-size: 15px;
+  font-weight: bold;
+  min-width: 52px;
+  color: var(--ink);
+}
+
+.url-display {
+  flex: 1;
+  font-family: monospace;
+  font-size: 13px;
+  color: var(--ink-2);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.copy-url-btn {
+  padding: 4px 14px;
+  font-size: 13px;
+  min-height: 36px;
+  cursor: pointer;
+  white-space: nowrap;
 }
 
 /* 今日額度與用量進度條（4-3） */
@@ -1109,3 +1081,576 @@ h1, h2, h3, h4, h5, h6, button, .brand-title, .pill, .quota-indicator {
   font-family: var(--font-hand);
   font-size: 13px;
 }
+
+/* =========================================================
+   年段分級樣式（規格：說明/改版規格_年段分級.md）
+   ========================================================= */
+
+/* 頁首年段標籤與切換按鈕 */
+.level-nav-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-right: 6px;
+}
+
+.level-badge-name {
+  background: var(--highlight);
+  color: var(--on-highlight);
+  font-family: var(--font-hand);
+  font-size: 14px;
+  font-weight: bold;
+  padding: 2px 10px;
+  border-radius: var(--pill);
+  border: var(--line);
+}
+
+.change-level-btn {
+  background: transparent;
+  border: none;
+  color: var(--ink-2);
+  font-family: var(--font-hand);
+  font-size: 13px;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 2px 4px;
+}
+
+.change-level-btn:hover {
+  color: var(--ink);
+}
+
+/* 年段選擇大卡片畫面 */
+.level-picker-section {
+  text-align: center;
+  padding: 28px 20px;
+}
+
+.level-picker-title {
+  font-size: 24px;
+  margin-bottom: 6px;
+  justify-content: center;
+}
+
+.level-picker-subtitle {
+  color: var(--ink-2);
+  font-size: 15px;
+  margin-bottom: 24px;
+}
+
+.level-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 720px) {
+  .level-cards-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.level-card {
+  background: var(--paper-2);
+  border: var(--line);
+  border-radius: var(--wobble-1);
+  padding: 24px 18px;
+  cursor: pointer;
+  transition: transform 0.15s, background-color 0.15s, box-shadow 0.15s;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.level-card:hover {
+  transform: translateY(-2px);
+  background: #FFFFFF;
+  box-shadow: 2px 3px 0 var(--ink);
+}
+
+.level-card-tag {
+  display: inline-block;
+  font-size: 12px;
+  font-family: var(--font-hand);
+  background: var(--highlight);
+  color: var(--on-highlight);
+  padding: 2px 10px;
+  border-radius: var(--pill);
+  border: 1px solid var(--ink);
+  margin-bottom: 10px;
+}
+
+.level-card-name {
+  font-size: 22px;
+  margin-bottom: 8px;
+  color: var(--ink);
+  font-family: var(--font-hand);
+}
+
+.level-card-desc {
+  font-size: 14px;
+  color: var(--ink-2);
+  line-height: 1.5;
+}
+
+/* 範本卡共通網格 */
+.templates-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.template-card {
+  background: var(--paper-2);
+  border: var(--line-dashed);
+  border-radius: var(--wobble-2);
+  padding: 12px;
+  cursor: pointer;
+  transition: background-color 0.15s, border-color 0.15s, transform 0.15s;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.template-card:hover {
+  background: #FFFFFF;
+  transform: translateY(-1px);
+}
+
+.template-card.selected {
+  border: var(--line);
+  background: #FFFFFF;
+  outline: 2px solid var(--highlight);
+}
+
+.template-title {
+  font-family: var(--font-hand);
+  font-size: 16px;
+  font-weight: bold;
+  color: var(--ink);
+}
+
+.template-tip {
+  font-size: 12px;
+  color: var(--ink-2);
+  line-height: 1.4;
+  margin-top: 4px;
+  padding-top: 4px;
+  border-top: 1px dashed var(--rule);
+}
+
+.template-credit {
+  font-size: 11px;
+  color: var(--ink-2);
+  margin-top: 4px;
+}
+
+/* 中年級詞卡 */
+.middle-slots-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 14px 0;
+}
+
+.slot-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.slot-row-label {
+  font-family: var(--font-hand);
+  font-size: 16px;
+  font-weight: bold;
+  color: var(--ink);
+}
+
+.slot-chips-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.word-chip {
+  background: var(--paper-2);
+  border: var(--line-dashed);
+  border-radius: var(--pill);
+  padding: 6px 14px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background-color 0.15s;
+  user-select: none;
+}
+
+.word-chip:hover {
+  background: #FFFFFF;
+}
+
+.word-chip.selected {
+  background: var(--highlight);
+  color: var(--on-highlight);
+  border: var(--line);
+  font-weight: bold;
+}
+
+.word-custom-input {
+  max-width: 130px;
+  border: var(--line);
+  background: #FFFFFF;
+  padding: 4px 10px;
+  border-radius: var(--pill);
+  font-size: 14px;
+  font-family: var(--font-body);
+}
+
+.middle-sentence-box {
+  margin-top: 18px;
+  padding: 16px;
+  border: var(--line);
+  border-radius: var(--wobble-1);
+  background: #FFFFFF;
+}
+
+.middle-sentence-label {
+  font-size: 13px;
+  color: var(--ink-2);
+  margin-bottom: 6px;
+  font-family: var(--font-hand);
+}
+
+.middle-assembled-sentence {
+  font-size: 22px;
+  font-family: var(--font-hand);
+  line-height: 1.5;
+  color: var(--ink);
+}
+
+/* 高年級填空與細節 */
+.upper-blanks-box, .upper-extras-box {
+  margin: 12px 0;
+}
+
+.upper-box-label {
+  font-size: 14px;
+  font-family: var(--font-hand);
+  font-weight: bold;
+  color: var(--ink);
+  margin-bottom: 8px;
+}
+
+.upper-blanks-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+.upper-blank-item {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.upper-blank-label {
+  font-size: 12px;
+  color: var(--ink-2);
+  font-family: var(--font-hand);
+}
+
+.upper-extras-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.extra-chip {
+  background: var(--paper-2);
+  border: var(--line-dashed);
+  border-radius: var(--pill);
+  padding: 6px 14px;
+  font-size: 14px;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.15s;
+}
+
+.extra-chip:hover {
+  background: #FFFFFF;
+}
+
+.extra-chip.selected {
+  background: var(--highlight);
+  color: var(--on-highlight);
+  border: var(--line);
+  font-weight: bold;
+}
+
+/* 國中提示詞架構說明 */
+.junior-structure-card {
+  margin-bottom: 16px;
+}
+
+.junior-structure-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+.junior-blocks-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 14px 0 10px;
+}
+
+.junior-block-item {
+  padding: 6px 12px;
+  border-radius: 4px;
+  border: 1px solid var(--ink);
+  font-family: var(--font-hand);
+  font-size: 14px;
+  font-weight: bold;
+  color: #1F1F1F;
+}
+
+.junior-quote-box {
+  background: var(--paper-2);
+  border-left: 4px solid var(--highlight);
+  padding: 10px 14px;
+  font-size: 14px;
+  color: var(--ink);
+  margin-top: 10px;
+  line-height: 1.6;
+}
+
+/* 國中八段卡片 */
+.junior-segments-container {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 12px;
+}
+
+.segment-card {
+  background: var(--paper);
+  border: var(--line);
+  border-radius: 6px;
+  padding: 14px 16px;
+  transition: outline 0.15s, opacity 0.2s, background-color 0.2s;
+}
+
+.segment-card.highlighted {
+  outline: 3px solid var(--highlight);
+}
+
+.segment-card.segment-disabled {
+  opacity: 0.55;
+  background: var(--paper-2);
+}
+
+.segment-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.segment-title {
+  font-family: var(--font-hand);
+  font-size: 17px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.segment-color-indicator {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  display: inline-block;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.segment-skip-label {
+  font-size: 13px;
+  color: var(--ink-2);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.segment-question {
+  font-size: 13px;
+  color: var(--ink-2);
+  margin-bottom: 6px;
+}
+
+.segment-textarea {
+  width: 100%;
+  min-height: 58px;
+  padding: 8px 10px;
+  border: var(--line);
+  border-radius: 4px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  background: #FFFFFF;
+  color: var(--ink);
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.segment-note {
+  font-size: 13px;
+  color: var(--ink-2);
+  margin-top: 6px;
+  background: var(--paper-2);
+  padding: 6px 10px;
+  border-radius: 4px;
+  line-height: 1.4;
+}
+
+.segment-effect-toggle {
+  font-size: 12px;
+  color: var(--ink-2);
+  margin-top: 6px;
+  cursor: pointer;
+  text-decoration: underline;
+  display: inline-block;
+}
+
+.segment-effect-text {
+  font-size: 12px;
+  color: var(--ink-2);
+  margin-top: 4px;
+  padding-left: 8px;
+  border-left: 2px solid var(--rule);
+  line-height: 1.4;
+}
+
+.segment-missing-text {
+  font-size: 13px;
+  color: var(--pencil-red);
+  margin-top: 6px;
+  padding: 6px 10px;
+  background: rgba(201, 42, 42, 0.08);
+  border-radius: 4px;
+  line-height: 1.4;
+}
+
+.segment-conflict-note {
+  font-size: 13px;
+  color: var(--pencil-red);
+  margin-top: 6px;
+  padding: 6px 10px;
+  background: rgba(255, 169, 77, 0.2);
+  border-radius: 4px;
+  line-height: 1.4;
+}
+
+/* 完整提示詞預覽（彩色底線） */
+.junior-preview-card {
+  margin-top: 14px;
+}
+
+.junior-preview-box {
+  background: #FFFFFF;
+  border: var(--line);
+  border-radius: 4px;
+  padding: 16px;
+  font-size: 15px;
+  line-height: 2.2;
+  min-height: 80px;
+  color: var(--ink);
+}
+
+.preview-segment-span {
+  display: inline;
+  margin-right: 4px;
+  padding-bottom: 2px;
+  cursor: pointer;
+  transition: background-color 0.15s, outline 0.15s;
+}
+
+.preview-segment-span:hover,
+.preview-segment-span.highlighted {
+  background-color: rgba(255, 212, 59, 0.35);
+  border-radius: 2px;
+}
+
+/* 八段顏色 class 定義（規格 5-3） */
+.seg-subject { border-left: 6px solid #FFD43B; }
+.seg-action { border-left: 6px solid #8CE99A; }
+.seg-setting { border-left: 6px solid #74C0FC; }
+.seg-composition { border-left: 6px solid #FFA8A8; }
+.seg-lighting { border-left: 6px solid #FFA94D; }
+.seg-material { border-left: 6px solid #E599F7; }
+.seg-style { border-left: 6px solid #B197FC; }
+.seg-constraints { border-left: 6px solid #ADB5BD; }
+
+.hl-subject { border-bottom: 3px solid #FFD43B; }
+.hl-action { border-bottom: 3px solid #8CE99A; }
+.hl-setting { border-bottom: 3px solid #74C0FC; }
+.hl-composition { border-bottom: 3px solid #FFA8A8; }
+.hl-lighting { border-bottom: 3px solid #FFA94D; }
+.hl-material { border-bottom: 3px solid #E599F7; }
+.hl-style { border-bottom: 3px solid #B197FC; }
+.hl-constraints { border-bottom: 3px solid #ADB5BD; }
+
+.bg-subject { background-color: #FFD43B; }
+.bg-action { background-color: #8CE99A; }
+.bg-setting { background-color: #74C0FC; }
+.bg-composition { background-color: #FFA8A8; }
+.bg-lighting { background-color: #FFA94D; }
+.bg-material { background-color: #E599F7; }
+.bg-style { background-color: #B197FC; }
+.bg-constraints { background-color: #ADB5BD; }
+
+/* 提示詞小實驗便條 */
+.junior-experiment-card {
+  background: #FFF9DB;
+  border: var(--line-dashed);
+  border-radius: var(--wobble-3);
+  padding: 14px 16px;
+  margin-top: 14px;
+}
+
+.junior-experiment-title {
+  font-family: var(--font-hand);
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: 4px;
+  color: var(--ink);
+}
+
+.junior-experiment-body {
+  font-size: 14px;
+  color: var(--ink);
+  line-height: 1.5;
+}
+
+/* 照片提示與風格說明文字 */
+.photo-input-hint {
+  background: var(--paper-2);
+  border: var(--line-dashed);
+  padding: 8px 12px;
+  font-size: 14px;
+  color: var(--ink);
+  border-radius: 4px;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.style-note-text {
+  font-size: 13px;
+  color: var(--ink-2);
+}
+

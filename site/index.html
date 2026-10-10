@@ -3,12 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://script.google.com https://script.googleusercontent.com; object-src 'none'; base-uri 'none'; form-action 'none'">
   <title>AI 創意生圖小幫手</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Iansui&family=Noto+Sans+TC:wght@400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/style.css?v=20261010">
+  <link rel="stylesheet" href="assets/style.css?v=20261011">
 </head>
 <body>
   <!-- 測試模式黃色便利貼 (3-1) -->
@@ -30,6 +31,10 @@
         </div>
       </div>
       <div class="status-badge-group">
+        <div id="levelNavBadge" class="level-nav-badge" style="display:none;">
+          <span id="currentLevelName" class="level-badge-name"></span>
+          <button id="changeLevelBtn" class="change-level-btn" type="button">換年段</button>
+        </div>
         <span id="statusLight" class="status-indicator open">檢查狀態中…</span>
         <div id="remainingBadge" class="quota-indicator">你今天還可以畫 -- 張</div>
       </div>
@@ -53,8 +58,31 @@
       </div>
     </div>
 
+    <!-- 年段選擇畫面 (1-1) -->
+    <div id="levelPickerSection" class="card level-picker-section" style="display:none;">
+      <h2 class="card-title level-picker-title">選擇你的年段</h2>
+      <p class="level-picker-subtitle">依照你的年級，選擇最適合的提示詞工具</p>
+      <div class="level-cards-grid">
+        <div class="level-card" role="button" tabindex="0" data-level="middle">
+          <div class="level-card-tag">3–4 年級</div>
+          <h3 class="level-card-name">中年級</h3>
+          <p class="level-card-desc">點一點，就能畫出你的想像</p>
+        </div>
+        <div class="level-card" role="button" tabindex="0" data-level="upper">
+          <div class="level-card-tag">5–6 年級</div>
+          <h3 class="level-card-name">高年級</h3>
+          <p class="level-card-desc">用填空寫出一段好描述</p>
+        </div>
+        <div class="level-card" role="button" tabindex="0" data-level="junior">
+          <div class="level-card-tag">7–9 年級</div>
+          <h3 class="level-card-name">國中</h3>
+          <p class="level-card-desc">學會提示詞的結構，看懂每一句在做什麼</p>
+        </div>
+      </div>
+    </div>
+
     <!-- 學生主要生圖工作區 -->
-    <div id="mainWorkspace">
+    <div id="mainWorkspace" style="display:none;">
       <!-- 畫圖模式切換 (3-3) -->
       <div class="mode-selector" role="tablist">
         <button id="modeTextBtn" class="mode-btn active" role="tab" aria-selected="true" type="button">用文字畫圖</button>
@@ -64,6 +92,7 @@
       <!-- 照片模式拍照/選檔區 -->
       <div id="photoSection" class="card" style="display:none;">
         <h2 class="card-title">上傳你的照片</h2>
+        <div id="photoInputHint" class="photo-input-hint" style="display:none;"></div>
         <div class="photo-uploader">
           <input type="file" id="cameraFileInput" class="upload-file-input" accept="image/*" capture="environment">
           <input type="file" id="albumFileInput" class="upload-file-input" accept="image/*">
@@ -79,39 +108,104 @@
         </div>
       </div>
 
-      <!-- 風格選擇區 (3-3) -->
+      <!-- 風格選擇區 (3-3 / 5-5) -->
       <div class="card">
-        <h2 class="card-title">選一種畫風</h2>
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+          <h2 class="card-title" style="margin-bottom:0;">選一種畫風</h2>
+          <div id="styleNote" class="style-note-text" style="display:none;"></div>
+        </div>
         <div id="stylesGrid" class="styles-grid">
-          <!-- 由 JS 動態渲染 7 種風格卡片 -->
+          <!-- 由 JS 動態渲染風格卡片 -->
         </div>
       </div>
 
-      <!-- 描述小幫手區 (3-3) -->
-      <div class="card">
-        <h2 class="card-title">你想畫什麼？</h2>
+      <!-- 中年級介面 (3 節) -->
+      <div id="middleWorkspace" style="display:none;">
+        <div class="card">
+          <h2 class="card-title">故事卡（點一張快速換題目）</h2>
+          <div id="middleTemplatesGrid" class="templates-grid"></div>
+        </div>
+        <div class="card">
+          <h2 class="card-title">點選詞卡組成句子</h2>
+          <div id="middleSlotsContainer" class="middle-slots-container"></div>
+          <div class="middle-sentence-box">
+            <div class="middle-sentence-label">組好的句子：</div>
+            <div id="middleSentencePreview" class="middle-assembled-sentence"></div>
+          </div>
+        </div>
+      </div>
 
-        <!-- 兒童引導小欄位（填空句設計） -->
-        <div class="helper-fill">
-          <input type="text" id="subjectInput" class="blank-input" placeholder="戴帽子的貓" aria-label="主角是誰"> 在 
-          <input type="text" id="locationInput" class="blank-input" placeholder="月亮上" aria-label="在哪裡"> 
-          <input type="text" id="actionInput" class="blank-input" placeholder="釣星星" aria-label="做什麼">，感覺 
-          <input type="text" id="feelingInput" class="blank-input" placeholder="很安靜" aria-label="感覺或顏色">
+      <!-- 高年級介面 (4 節) -->
+      <div id="upperWorkspace" style="display:none;">
+        <div class="card">
+          <h2 class="card-title">範本卡</h2>
+          <div id="upperTemplatesGrid" class="templates-grid"></div>
+        </div>
+        <div class="card">
+          <h2 class="card-title">填空與加細節</h2>
+          <div class="upper-blanks-box">
+            <div class="upper-box-label">填空句：</div>
+            <div id="upperBlanksContainer" class="upper-blanks-container"></div>
+          </div>
+          <div class="upper-extras-box">
+            <div class="upper-box-label">加一點細節：</div>
+            <div id="upperExtrasContainer" class="upper-extras-container"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 國中介面 (5 節) -->
+      <div id="juniorWorkspace" style="display:none;">
+        <!-- 八段式架構說明（可收合） -->
+        <div class="card junior-structure-card">
+          <div class="junior-structure-header" id="juniorStructureToggle">
+            <h2 class="card-title" style="margin-bottom:0;">八段式提示詞架構說明</h2>
+            <button id="juniorToggleBtn" class="quick-btn" type="button">收合說明</button>
+          </div>
+          <div id="juniorStructureBody" class="junior-structure-body">
+            <div id="juniorBlocksRow" class="junior-blocks-row"></div>
+            <div class="junior-quote-box">
+              AI 只看得到你給它的文字。一段好的提示詞，就像給畫家的一張工作單：要畫<strong>什麼</strong>、在<strong>哪裡</strong>、從<strong>哪個角度</strong>看、<strong>光</strong>從哪裡來、東西是<strong>什麼做的</strong>、用<strong>什麼畫法</strong>，以及<strong>不要</strong>什麼。每一段負責一件事，少了哪一段，AI 就會自己猜那一段。
+            </div>
+          </div>
         </div>
 
-        <!-- 給我靈感快捷按鈕 -->
-        <div class="inspiration-bar">
-          <span class="inspiration-label">給我靈感：</span>
-          <button class="inspiration-btn" data-inspire="cat" type="button">太空小貓</button>
-          <button class="inspiration-btn" data-inspire="owl" type="button">魔法樹屋</button>
-          <button class="inspiration-btn" data-inspire="dolphin" type="button">夢幻海洋</button>
+        <!-- 國中範本卡 -->
+        <div class="card">
+          <h2 class="card-title">範本卡</h2>
+          <div id="juniorTemplatesGrid" class="templates-grid"></div>
         </div>
 
-        <!-- 最終送給 AI 的完整描述（橫格紙底色） -->
-        <div class="prompt-area-wrapper">
-          <label for="promptTextarea" class="prompt-label">AI 會收到的描述（可自由微調）：</label>
-          <textarea id="promptTextarea" class="prompt-textarea" placeholder="點擊上方靈感按鈕，或由小幫手組合成完整描述…" maxlength="300"></textarea>
-          <div id="charCounter" class="char-counter">0 / 300</div>
+        <!-- 八段編輯區 -->
+        <div class="card">
+          <h2 class="card-title">八段提示詞編輯</h2>
+          <div id="juniorSegmentsContainer" class="junior-segments-container"></div>
+        </div>
+
+        <!-- 完整提示詞預覽（彩色底線） -->
+        <div class="card junior-preview-card">
+          <h2 class="card-title">完整提示詞預覽</h2>
+          <div id="juniorPreviewBox" class="junior-preview-box"></div>
+        </div>
+
+        <!-- 提示詞小實驗便條 -->
+        <div class="junior-experiment-card">
+          <div class="junior-experiment-title">提示詞小實驗</div>
+          <div class="junior-experiment-body">
+            一次只改一段，畫兩張來比較。例如只把「⑤ 光線」改成「紫色霓虹燈從下方照上來」，其他都不動。這就是科學實驗的「控制變因」。
+          </div>
+        </div>
+      </div>
+
+      <!-- 描述與送出區（高年級與國中顯示文字框，中年級直接把組好的句子送出） -->
+      <div class="card" id="submitCard">
+        <div id="promptAreaWrapper" class="prompt-area-wrapper">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+            <label for="promptTextarea" class="prompt-label">AI 會收到的描述（可自由微調）：</label>
+            <button id="rebuildFromBlanksBtn" class="btn-secondary" style="font-size:13px;padding:4px 12px;min-height:32px;display:none;" type="button">用填空重新產生</button>
+          </div>
+          <textarea id="promptTextarea" class="prompt-textarea" placeholder="點擊上方範本或組合成完整描述…" maxlength="600"></textarea>
+          <div id="charCounter" class="char-counter">0 / 600</div>
         </div>
 
         <!-- 開始畫圖按鈕 (3-4) -->
@@ -151,14 +245,16 @@
     </div>
   </main>
 
-  <!-- 頁尾 (3-10) -->
+  <!-- 頁尾 (3-10 / 5-1) -->
   <footer class="footer">
-    這個網站由老師提供 AI 額度，請好好使用。你輸入的描述老師看得到。
+    <div>這個網站由老師提供 AI 額度，請好好使用。你輸入的描述老師看得到。</div>
+    <div class="footer-credit" style="margin-top:6px;font-size:13px;color:var(--ink-2);">部分範本改編自 <a href="https://github.com/PicoTrex/Awesome-Nano-Banana-images" target="_blank" rel="noopener noreferrer" style="color:var(--ink);text-decoration:underline;">PicoTrex/Awesome-Nano-Banana-images</a>（Apache-2.0）</div>
   </footer>
 
-  <script src="assets/config.js?v=20261010"></script>
-  <script src="assets/image.js?v=20261010"></script>
-  <script src="assets/api.js?v=20261010"></script>
-  <script src="assets/app.js?v=20261010"></script>
+  <script src="assets/config.js?v=20261011"></script>
+  <script src="assets/image.js?v=20261011"></script>
+  <script src="assets/api.js?v=20261011"></script>
+  <script src="assets/levels.js?v=20261011"></script>
+  <script src="assets/app.js?v=20261011"></script>
 </body>
 </html>

@@ -18,6 +18,7 @@ var ApiClient = {
   },
 
   STYLES: [
+    { id: 'free', label: '✍️ 自訂風格', emoji: '✍️' },
     { id: 'pixar', label: '🎬 3D 動畫風', emoji: '🎬' },
     { id: 'watercolor', label: '🎨 水彩風', emoji: '🎨' },
     { id: 'cyberpunk', label: '🌆 未來科技風', emoji: '🌆' },
