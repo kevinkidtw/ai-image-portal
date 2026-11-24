@@ -10,5 +10,5 @@
 6. **不准為了讓測試通過而修改測試的斷言、跳過測試、或 mock 掉被測的函式本身。** 測試失敗就修程式。`tests/integration.test.js`、`tests/frontend-static.test.js`、`tests/levels.test.js` 與 `site/assets/levels.js` 由 Claude 擁有，**完全不准修改**。
 7. **不准把任何圖片推到 GitHub，或把 Drive 檔案設為公開分享。**
 8. 模型 ID、API 參數名稱**要查官方文件確認**，不要憑記憶寫。查不到就在測試報告註明「未查證」。
-9. 不要動這個資料夾以外的任何檔案（上一層 `NAS網站部署/` 裡有 ccmtc-official、squid-portal 等其他正式專案，碰都不要碰）。
+9. 不要動這個資料夾以外的任何檔案（本專案位於 `NAS網站部署/教學工具/`；`NAS網站部署/` 底下還有 `車城科技中心/`（ccmtc-official、squid-portal 等）、`島遊/`、`風土所/` 等其他正式專案，碰都不要碰）。
 10. 每個階段結束時停下來，在 `說明/測試報告.md` 更新：做了什麼、改了哪些檔案、`npm test` 的完整輸出、未完成或有疑慮的項目。**不要宣稱沒有真的跑過的測試已通過。**
